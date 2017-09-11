@@ -24,6 +24,31 @@ def get_sentences():
 	#each sentence is represent by a list of individual string tokens
 	return brown.sents() 
 
+def get_browndocs(verbose=False): 
+	'''
+		Gets brown corpus's articles as documents
+
+		Returns
+			browndocs: dict with the keys being articles(document) ids and the values being 
+						the documents representing a list of lists of strings representing sentences 
+						within documents
+
+	'''
+	#defines all dcouments categories 
+	df= pd.read_csv('../../random-projection/datasets/brown_fileids.txt', sep=' ')
+	documentids= df.ix[:,0]
+	
+	#iterates all documents withing corpus adding sentences and at the same time conveting
+	# it's tokens to idx
+	doc2idx= {}	
+	for d, docid in enumerate(documentids):
+		sentences= brown.sents(fileids=[docid])
+		doc2idx[docid]= sentences
+
+	return doc2idx
+
+
+
 def get_documents_with_word2idx(verbose=False):	
 	'''
 		Gets brown corpus's articles as documents and the corresponding word2idx representation
@@ -62,7 +87,7 @@ def get_documents_with_word2idx(verbose=False):
 			indexed_sentence.append(word2idx[token]) 
 		doc2idx[docid]= doc2idx[docid].append(indexed_sentence)
 		if verbose:
-			sys.stdout.write('document:%d\tdocid:%s\ttoken:%s\tV:%d' % (d, docid, anytoken, len(word2idx)))
+			sys.stdout.write('document:%d\tdocid:%s\ttoken:%s\tV:%d\n' % (d, docid, anytoken, len(word2idx)))
 			sys.stdout.flush()
 	return doc2idx, word2idx
 
@@ -86,30 +111,6 @@ def get_sentences_with_word2idx():
 
 	print 'Vocab size:', i 
 	return indexed_sentences, word2idx
-
-# def get_sentences_with_word2idx_3k_documents():
-# 	'''
-# 		get_sentences_with_word2idx_3k_documents returns corpora as a [V,3000] numpy matrix
-# 		this is not ideal since we're mixing a lot of documents from different genres BUT it is
-# 		a fast startup point
-
-# 	'''
-# 	indexed_sentences, word2idx	= get_sentences_with_word2idx() 
-# 	V = len(word2idx)
-# 	D = 3000
-# 	batch_size = len(indexed_sentences) / D # N sentences per document
-
-# 	BAG = np.zeros((V,D), dtype=np.int32)
-# 	for d in xrange(D):
-# 		# forms a document from 57340 sentences of brown corpus
-# 		document_sentences= indexed_sentences[d*batch_size:(d+1)*batch_size]
-# 		# Flattens
-# 		this_doc= [item for sublist in document_sentences for item in sublist] 
-# 		doc = np.array(this_doc, dtype=np.int32)
-# 		BAG[doc,d] =1 
-
-# 	return BAG, word2idx	
-
 
 def get_sentences_with_word2idx_limit_vocab(n_vocab=2000, keep_words=KEEP_WORDS):
 	# Returns sentences as indexes of words and word2idx mapping

@@ -6,13 +6,38 @@ Created on Sep 09, 2017
 motivation: useful cross module corpora functions; such as tokenization
 '''
 import string 
+import numpy as np 
 
 def flatten(l):
-	'''
+	'''		
 		l is a list of list, in our case a list of list of words		
+
+		returns
+		f : a flattened list 
 	'''
 	f = [item for sublist in l for item in sublist] 
 	return f
+
+def document2bag_of_words(doc2idx, word2idx): 
+		'''
+		Converts a doc2idx to a bag of words
+
+		Returns
+			bow: is a numpy matrix of size VxD (vocabulary size vs documents)
+						such that bow[i,j] = 5 if and only if term i appears 5 times on 
+						document j
+
+
+	'''
+	V = len(word2idx) 
+	D = len(doc2idx)
+	stopwords = get_stopwords()
+	bow= np.zeros((V,D), dtype=np.int32)
+	for docid, doc in doc2idx.iteritems():
+		
+
+
+
 
 def tokenizer(l, stopwords=None): 
 	if stopwords is None: 
