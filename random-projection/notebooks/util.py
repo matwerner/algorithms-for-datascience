@@ -30,6 +30,7 @@ def get_stopwords():
 		stop_words.append(word) 
 	return stop_words
 
+
 def remove_puctuation(s):
 	'''
 		s is a string with punctuation; converts unicode to string which might get data loss
