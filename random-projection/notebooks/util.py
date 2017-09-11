@@ -7,8 +7,10 @@ motivation: useful cross module corpora functions; such as tokenization
 '''
 import string 
 import numpy as np 
-import pandas as pd 
+import sys 
+
 from itertools import groupby 
+from nltk.corpus import stopwords as _stopwords
 
 def flatten(l):
 	'''		
@@ -20,7 +22,7 @@ def flatten(l):
 	f = [item for sublist in l for item in sublist] 
 	return f
 
-def documents2bag_of_words(documents, tokenize=True): 
+def documents2bag_of_words(documents, tokenize=True, verbose=True): 
 	'''
 				Gets a documents i.e dict which the keys being articles(document) ids and the values being 
 						the documents represented by a list (document) of lists of (sentences) strings (tokens)
@@ -30,13 +32,14 @@ def documents2bag_of_words(documents, tokenize=True):
 						document j
 
 	'''
+	d=1 
+	word_count=0 	
 	word2idx={} 
 	doc2freq={} 
 	doc2idx= {} 
 	stopwords = get_stopwords()
 	for doc_id, doc in documents.iteritems():
-		# BEWARE OF DATA LOSS: Flattening the arrays and missing the information of sentence begin and end
-		import code; code.interact(local=dict(globals(), **locals()))
+		# BEWARE OF DATA LOSS: Flattening the arrays and missing the information of sentence begin and end		
 		sentences = flatten(doc)
 		if tokenize:
 			sentences = tokenizer(sentences, stopwords=stopwords)
@@ -44,18 +47,28 @@ def documents2bag_of_words(documents, tokenize=True):
 		
 		indexed_sentences, word2idx = sentences2indexed_sentences(sentences, word2idx=word2idx)
 		indices, idx_freq =indexed_sentences2idx_freq(indexed_sentences)
-		
-		doc2idx[doc_id]= indices 
-		doc2freq[doc_id]= idx_freq 
-		
+
+		doc2idx[doc_id]= list(indices) 
+		doc2freq[doc_id]= list(idx_freq)  
+
+		if verbose: 
+			word_count+= sum(idx_freq) 
+			sys.stdout.write('document:%d of %d\tdocid:%s\tV:%d\tWORD COUNT:%d\r' % (d, len(documents), doc_id, len(word2idx), word_count))
+			sys.stdout.flush()
+			d+=1	
+
+	#prepares cursor for next stdout		
+	print '' 		
 	V= len(word2idx)
-	D= len(doc)	
+	D= len(documents)	
 
 	bow = np.zeros((V,D), dtype=np.int32)
-	for j, doc_id in enumerate(doc): 
-		bow[doc2idx[doc_id],j]= doc2freq[doc_id]
-
-	return bow 
+	for j, doc_id in enumerate(documents): 
+		# import code; code.interact(local=dict(globals(), **locals()))		
+		indices= np.array(doc2idx[doc_id], dtype=np.int32)
+		freq=    np.array(doc2freq[doc_id], dtype=np.int32)
+		bow[indices,j]= freq
+	return bow, word2idx  
 
 def tokenizer(l, stopwords=None): 
 	if stopwords is None: 
@@ -64,16 +77,11 @@ def tokenizer(l, stopwords=None):
 	tokens = [t.lower() for t in l] 		# to lowecase
 	tokens = [remove_puctuation(t) for t in tokens] 
 	tokens = [t for t in tokens if t not in stopwords] # remove stopwords
-
+	tokens = filter(None, tokens)
 	return tokens
 
-def get_stopwords():
-	# stop_words=[]
-	# for word in open('../../random-projection/datasets/stopwords.txt'):
-	# 	stop_words.append(word) 
-	df = pd.read_csv('../../random-projection/datasets/stopwords.txt', index_col=False) 
-	import code; code.interact(local=dict(globals(), **locals()))
-	return df.ix[:, 0].to_list()
+def get_stopwords(lang='english'):	
+	return set(_stopwords.words(lang))	
 
 
 def remove_puctuation(s):
@@ -100,19 +108,17 @@ def sentences2indexed_sentences(sentences, word2idx={}):
 
 	'''
 	if not word2idx:
-		idx= 0 
+		idx=0
 	else:
-		idx= max(word2idx.keys())+1 
+		idx= max(word2idx.values())+1 
+
 	indexed_sentences=[] 
-	for sentence in sentences: 
-		indexed_sentence= [] 
-		for token in sentence: 
-			token = token.lower()
-			if token not in word2idx: 
-				word2idx[token]= idx 
-				idx += 1 	
-			indexed_sentence.append(word2idx[token]) 
-		indexed_sentences.append(indexed_sentence)
+	for token in sentences: 
+		token = token.lower()			
+		if token not in word2idx: 
+			word2idx[token]= idx 
+			idx += 1 	
+		indexed_sentences.append(word2idx[token]) 	
 
 	return indexed_sentences, word2idx 
 
@@ -134,7 +140,7 @@ def indexed_sentences2idx_freq(indexed_sentences):
 							and it appears 7 times on document represented by indexed_sentences
 
 	'''
-	import code; code.interact(local=dict(globals(), **locals()))
+	# import code; code.interact(local=dict(globals(), **locals()))
 	indices= set(indexed_sentences)
 	indexed_sentences= sorted(indexed_sentences)
 	idx_freq= [len(list(group)) for key, group in groupby(indexed_sentences)]

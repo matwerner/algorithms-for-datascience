@@ -44,7 +44,7 @@ def get_documents(verbose=False):
 		sentences= brown.sents(fileids=[docid])
 		browndocs[docid]= sentences
 		if verbose: 
-			sys.stdout.write('document:%d of %d\tdocid:%s\n' % (d, len(documentids), docid))
+			sys.stdout.write('document:%d of %d\tdocid:%s\r' % (d, len(documentids), docid))
 			sys.stdout.flush()
 	return browndocs
 
