@@ -24,14 +24,13 @@ def get_sentences():
 	#each sentence is represent by a list of individual string tokens
 	return brown.sents() 
 
-def get_browndocs(verbose=False): 
+def get_documents(verbose=False): 
 	'''
 		Gets brown corpus's articles as documents
 
 		Returns
-			browndocs: dict with the keys being articles(document) ids and the values being 
-						the documents representing a list of lists of strings representing sentences 
-						within documents
+			browndocs: Gets a document i.e dict which the keys being articles(document) ids and the values being 
+						the documents represented by a list (document) of lists of (sentences) strings (tokens)
 
 	'''
 	#defines all dcouments categories 
@@ -40,12 +39,14 @@ def get_browndocs(verbose=False):
 	
 	#iterates all documents withing corpus adding sentences and at the same time conveting
 	# it's tokens to idx
-	doc2idx= {}	
+	browndocs= {}		
 	for d, docid in enumerate(documentids):
 		sentences= brown.sents(fileids=[docid])
-		doc2idx[docid]= sentences
-
-	return doc2idx
+		browndocs[docid]= sentences
+		if verbose: 
+			sys.stdout.write('document:%d of %d\tdocid:%s\n' % (d, len(documentids), docid))
+			sys.stdout.flush()
+	return browndocs
 
 
 
@@ -87,7 +88,7 @@ def get_documents_with_word2idx(verbose=False):
 			indexed_sentence.append(word2idx[token]) 
 		doc2idx[docid]= doc2idx[docid].append(indexed_sentence)
 		if verbose:
-			sys.stdout.write('document:%d\tdocid:%s\ttoken:%s\tV:%d\n' % (d, docid, anytoken, len(word2idx)))
+			sys.stdout.write('document:%d\tdocid:%s\ttoken:%s\tV:%d\r' % (d, docid, anytoken, len(word2idx)))
 			sys.stdout.flush()
 	return doc2idx, word2idx
 
