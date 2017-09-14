@@ -6,12 +6,15 @@ Created on Sep 09, 2017
 motivation: Brown corpus data
 
 '''
-from nltk.corpus import brown 
+from nltk import download
+from nltk.corpus import brown
+from nltk.data import find
 import operator
 # import numpy as np 
 import pandas as pd
 import sys 
-import random 
+import random
+
 # we absolutely want to keep these words in order to make comparisons
 KEEP_WORDS = set([
 	'king', 'man', 'queen', 'woman',
@@ -19,7 +22,17 @@ KEEP_WORDS = set([
 	'london', 'britain', 'england',
 ])
 
-def get_sentences(): 
+def download_brown_corpus():
+	brown_corpus = 'corpora/brown'
+	try:
+		find(brown_corpus)
+	except LookupError:
+		download(brown_corpus)
+
+def get_sentences():
+	# Download brown corpus
+	download_brown_corpus()
+
 	# return 57340  sentences of brown corpus
 	#each sentence is represent by a list of individual string tokens
 	return brown.sents() 
@@ -30,10 +43,13 @@ def get_documents(verbose=False):
 
 		Returns
 			browndocs: Gets a document i.e dict which the keys being articles(document) ids and the values being 
-						the documents represented by a list (document) of lists of (sentences) strings (tokens)
+				the documents represented by a list (document) of lists of (sentences) strings (tokens)
 
 	'''
-	#defines all dcouments categories 
+	# Download brown corpus
+	download_brown_corpus()
+
+	#defines all documents categories 
 	df= pd.read_csv('../../random-projection/datasets/brown_fileids.txt', sep=' ')
 	documentids= df.ix[:,0]
 	
@@ -44,7 +60,7 @@ def get_documents(verbose=False):
 		sentences= brown.sents(fileids=[docid])
 		browndocs[docid]= sentences
 		if verbose: 
-			sys.stdout.write('document:%d of %d\tdocid:%s\r' % (d, len(documentids), docid))
+			sys.stdout.write('document:%d of %d\tdocid:%s\r' % (d + 1, len(documentids), docid))
 			sys.stdout.flush()
 	return browndocs
 
@@ -56,13 +72,13 @@ def get_documents_with_word2idx(verbose=False):
 
 		Returns
 			doc2idx: dict with the keys being articles(document) ids and the values being 
-						the documents representing a list of lists of integer(idx)
+				the documents representing a list of lists of integer(idx)
 
 			word2idx: dict with keys being tokens(words) and values being an idx(integer)
 
 	'''
 
-	#defines all dcouments categories 
+	#defines all documents categories 
 	df= pd.read_csv('../../random-projection/datasets/brown_fileids.txt', sep=' ')
 	documentids= df.ix[:,0]
 	
@@ -110,7 +126,7 @@ def get_sentences_with_word2idx():
 			indexed_sentence.append(word2idx[token])
 		indexed_sentences.append(indexed_sentence)
 
-	print 'Vocab size:', i 
+	print('Vocab size:', i)
 	return indexed_sentences, word2idx
 
 def get_sentences_with_word2idx_limit_vocab(n_vocab=2000, keep_words=KEEP_WORDS):
@@ -148,8 +164,8 @@ def get_sentences_with_word2idx_limit_vocab(n_vocab=2000, keep_words=KEEP_WORDS)
 		#restrict vocab size
 		#set all the words I want to keep to infinity
 		# so that they are included when I pick the most common words
-  	for word in keep_words:
-			word_idx_count[word2idx[word]] = float('inf')
+	for word in keep_words:
+		word_idx_count[word2idx[word]] = float('inf')
 
 
 	#remapping to new smaller vocabulary words
@@ -160,7 +176,7 @@ def get_sentences_with_word2idx_limit_vocab(n_vocab=2000, keep_words=KEEP_WORDS)
 	idx_new_idx_map= {} 
 	for idx, count in sorted_word_idx_count[:n_vocab]: 
 		word= idx2word[idx]
-		print word, count 
+		print(word, count)
 
 		word2idx_small[word]= new_idx
 		idx_new_idx_map[idx]= new_idx 
