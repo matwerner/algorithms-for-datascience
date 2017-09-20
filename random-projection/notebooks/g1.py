@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Sep 20, 2017
 
@@ -45,8 +46,7 @@ def get_sentences(verbose=True):
 			words= map(to_word, sentences)
 			corpora+= words 
 			#print article["TEXT"]
-
-			# import code; code.interact(local=dict(globals(), **locals()))
+			
 			total_sentences+= len(sentences)
 			total_words+= sum(map(len,words))
 
@@ -68,23 +68,33 @@ def get_documents(verbose=False):
 				the documents represented by a list (document) of lists of (sentences) strings (tokens)
 
 	'''
-	# Download brown corpus
-	download_brown_corpus()
+	#iterates all documents withing corpus adding sentences 
+	datasets_path= '../../random-projection/datasets/'
+	g1filename= '4000_g1_articles.json'
+	g1_path= datasets_path + g1filename 
 
-	#defines all documents categories 
-	df= pd.read_csv('../../random-projection/datasets/brown_fileids.txt', sep=' ')
-	documentids= df.ix[:,0]
-	
-	#iterates all documents withing corpus adding sentences and at the same time conveting
-	# it's tokens to idx
-	browndocs= {}		
-	for d, docid in enumerate(documentids):
-		sentences= brown.sents(fileids=[docid])
-		browndocs[docid]= sentences
-		if verbose: 
-			sys.stdout.write('document:%d of %d\tdocid:%s\r' % (d + 1, len(documentids), docid))
-			sys.stdout.flush()
-	return browndocs
+	def to_word(X):
+		return X.split(' ')
+
+	g1docs={}	
+	total_words=0
+	vocab=set([])
+	with open(g1_path) as data_file:
+		articles = json.load(data_file, encoding='utf-8')
+		for a, article in enumerate(articles):
+			g1_id= g1_url2id( article["URL"] ) 
+			# print article["URL"]
+			sentences= article["TEXT"].split('.')		#splits phrases
+			sentences= map(to_word, sentences)			#splits phrases into words	
+			vocab= vocab.union(set([word for sentence in sentences for word in sentence]))
+			g1docs[g1_id]= sentences
+			total_words+= sum(map(len,sentences))
+
+			if verbose: 
+				sys.stdout.write('article:%s of 4000\tV:%s\tWORD COUNT:%s\tdocid:%s\r' % (format(a + 1, '04d'), format(len(vocab),'05d'), format(total_words,'05d'), g1_id))
+				sys.stdout.flush()			
+	print ''
+	return g1docs
 
 
 
@@ -152,6 +162,7 @@ def get_documents(verbose=False):
 # 	return indexed_sentences, word2idx
 
 def main():
-	get_sentences()
+	# get_sentences()
+	get_documents(verbose=True)
 if __name__ == '__main__':
 	main()
