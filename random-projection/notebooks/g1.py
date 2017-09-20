@@ -81,18 +81,19 @@ def get_documents(verbose=False):
 	vocab=set([])
 	with open(g1_path) as data_file:
 		articles = json.load(data_file, encoding='utf-8')
-		for a, article in enumerate(articles):
-			g1_id= g1_url2id( article["URL"] ) 
-			# print article["URL"]
-			sentences= article["TEXT"].split('.')		#splits phrases
-			sentences= map(to_word, sentences)			#splits phrases into words	
-			vocab= vocab.union(set([word for sentence in sentences for word in sentence]))
-			g1docs[g1_id]= sentences
-			total_words+= sum(map(len,sentences))
+		
+	for a, article in enumerate(articles):
+		g1_id= g1_url2id( article["URL"] ) 
+		# print article["URL"]
+		sentences= article["TEXT"].split('.')		#splits phrases
+		sentences= map(to_word, sentences)			#splits phrases into words	
+		vocab= vocab.union(set([word for sentence in sentences for word in sentence]))
+		g1docs[g1_id]= sentences
+		total_words+= sum(map(len,sentences))
 
-			if verbose: 
-				sys.stdout.write('article:%s of 4000\tV:%s\tWORD COUNT:%s\tdocid:%s\r' % (format(a + 1, '04d'), format(len(vocab),'05d'), format(total_words,'05d'), g1_id))
-				sys.stdout.flush()			
+		if verbose: 
+			sys.stdout.write('article:%s of 4000\tV:%s\tWORD COUNT:%s\tdocid:%s\r' % (format(a + 1, '04d'), format(len(vocab),'05d'), format(total_words,'05d'), g1_id))
+			sys.stdout.flush()			
 	print ''
 	return g1docs
 
@@ -164,5 +165,5 @@ def get_documents(verbose=False):
 def main():
 	# get_sentences()
 	get_documents(verbose=True)
-if __name__ == '__main__':
-	main()
+# if __name__ == '__main__':
+# 	main()

@@ -8,7 +8,10 @@ motivation: useful cross module corpora functions; such as tokenization
 '''
 
 import string
+import unidecode 
+
 import numpy as np
+import pandas as pd 
 import sys
 import re 
 
@@ -17,6 +20,7 @@ from nltk import download
 from nltk.corpus import stopwords as _stopwords
 from nltk.data import find
 
+# import os.path
 def download_stopwords_corpus():
 	stopwords_cospus = 'corpora/stopwords'
 	try:
@@ -33,6 +37,22 @@ def flatten(l):
 	'''
 	f = [item for sublist in l for item in sublist] 
 	return f
+
+
+def bow2dump(bow, filename='bow.txt'):
+	'''		
+		writes the bow matrix to text
+	'''	
+	path= '../../random-projection/datasets/' + filename	
+	n_headers=bow.shape[1]-2
+	headers = list(bow.shape) + ['']*n_headers
+	df = pd.DataFrame(data=bow.astype(np.int32), columns=headers, index=None)
+	df.to_csv(path, sep=' ',index=False, index_label=False)
+
+	
+	# if os.path.isfile()
+	# np.savetxt(path, bow)
+
 
 def documents2bag_of_words(documents, tokenize=True, verbose=True, exclude_links=False, lang='english'): 
 	'''
@@ -60,8 +80,11 @@ def documents2bag_of_words(documents, tokenize=True, verbose=True, exclude_links
 		# BEWARE OF DATA LOSS: Flattening the arrays and missing the information of sentence begin and end		
 		sentences = flatten(doc)
 		if tokenize:
-			sentences = tokenizer(sentences, stopwords=stopwords)			
-		
+			if exclude_links:
+				sentences = tokenizer(sentences, stopwords=stopwords, exclude_matcher=matcher)			
+			else:
+				sentences = tokenizer(sentences, stopwords=stopwords)			
+
 		indexed_sentences, word2idx = sentences2indexed_sentences(sentences, word2idx=word2idx)
 		indices, idx_freq =indexed_sentences2idx_freq(indexed_sentences)
 
@@ -70,7 +93,7 @@ def documents2bag_of_words(documents, tokenize=True, verbose=True, exclude_links
 
 		if verbose: 
 			word_count+= sum(idx_freq) 
-			sys.stdout.write('document:%d of %d\tdocid:%s\tV:%d\tWORD COUNT:%d\r' % (d, len(documents), doc_id, len(word2idx), word_count))
+			sys.stdout.write('document:%d of %d\tV:%d\tWORD COUNT:%d\tdocid:%s\r' % (d, len(documents), len(word2idx), word_count, doc_id))
 			sys.stdout.flush()
 			d+=1	
 
@@ -109,9 +132,13 @@ def remove_puctuation(s):
 	'''
 		s is a string with punctuation; converts unicode to string which might get data loss
 			url: https://stackoverflow.com/questions/23175809/typeerror-translate-takes-one-argument-2-given-python
+					 https://pypi.python.org/pypi/Unidecode
 	'''	
 	# return str(s).translate(None, string.punctuation)
-	return s.translate(None, string.punctuation)
+	s = unidecode.unidecode(s) # Converts unicode s into closest ascii s, removes accents
+	if s: 
+		s= s.translate(None, string.punctuation) # removes punctuation
+	return s
 
 def sentences2indexed_sentences(sentences, word2idx={}):
 	'''
