@@ -42,7 +42,7 @@ def get_sentences(verbose=True):
 		for a, article in enumerate(articles):
 			g1_id= g1_url2id( article["URL"] ) 
 			# print article["URL"]
-			sentences= article["TEXT"].split('.')
+			sentences= article["TEXT"].split('. ') #space prevents URLs to be split as phrases
 			words= map(to_word, sentences)
 			corpora+= words 
 			#print article["TEXT"]

@@ -109,17 +109,20 @@ def documents2bag_of_words(documents, tokenize=True, verbose=True, exclude_links
 		bow[indices,j]= freq
 	return bow, word2idx  
 
-def tokenizer(l, stopwords=None, exclude_matcher=None): 
+def tokenizer(tokens, stopwords=None, exclude_matcher=None): 
 	if stopwords is None:
 		stopwords= get_stopwords()
 
-	tokens = [t.lower() for t in l] 		# to lowercase
-	tokens = [remove_puctuation(t) for t in tokens] 
-	tokens = [t for t in tokens if t not in stopwords] # remove stopwords
-	tokens = filter(None, tokens)
 	if exclude_matcher:		
 		tokens = [t for t in tokens if exclude_matcher.search(t) is None]
 		tokens = filter(None, tokens)
+
+	tokens = [t.lower() for t in tokens] 		# to lowercase
+
+	tokens = [remove_puctuation(t) for t in tokens] 
+	tokens = [t for t in tokens if t not in stopwords] # remove stopwords
+	tokens = filter(None, tokens)
+	
 
 	return tokens
 
