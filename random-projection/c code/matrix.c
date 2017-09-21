@@ -95,8 +95,40 @@ void sparse_matrix_multsm(SparseMatrix* A, SparseMatrix* B, SparseMatrix* C){
 	//	Matrix A should be MxN
 	//	Matrix B should be QxN
 	//	Matrix C should be MxQ
-	for(i = 0; i < B->n_rows; i++){
+	for(i = 0; i < A->n_rows; i++){
 		sparse_matrix_multsv(A, B->rows[i], &(C->rows[i]));
+	}
+}
+
+void matrix_multsv(int m, int n, float** A, SparseVector* v, SparseVector** w){
+	int i;
+	float* row;
+	
+	// Instantiate a vector to store all dot products
+	row = (float*)malloc(sizeof(float)*m);
+
+	// Calculate dot products
+	for( i = 0; i < m; i++){
+		row[i] = sparse_vector_multdv(v, A[i]);
+	}
+	
+	// Instantiate a sparse vector
+	*w = sparse_vector_create(m, row);
+
+	// Free vector
+	free(row);
+	row = NULL;
+}
+
+void sparse_matrix_multdm(SparseMatrix* A, int m, int n, float** B, SparseMatrix* C){
+	int i;
+
+	// OBS:	Here we're expecting that B is transposed. That is,
+	//	Matrix A should be MxN
+	//	Matrix B should be QxN
+	//	Matrix C should be MxQ
+	for(i = 0; i < A->n_rows; i++){
+		matrix_multsv(m, n, B, A->rows[i], &(C->rows[i]));
 	}
 }
 
@@ -125,6 +157,20 @@ void sparse_matrix_show(SparseMatrix* A){
 	for(i = 0; i < A->n_rows; i++){
 		sparse_vector_show(A->rows[i]);
 	}
+}
+
+float** sparse_matrix_todense(SparseMatrix* A, int *m, int *n){
+	int i;
+	float** ADense;
+
+	*m = A->n_rows;
+
+	ADense = (float**)malloc(sizeof(float*)*A->n_rows);	
+	for(i = 0; i < A->n_rows; i++){
+		ADense[i] = sparse_vector_todense(A->rows[i], n);
+	}
+
+	return ADense;
 }
 
 SparseMatrix* sparse_matrix_read(char* filename, int* m, int* n){

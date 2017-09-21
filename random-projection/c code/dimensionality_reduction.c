@@ -16,7 +16,7 @@ motivation: API for Dimensionality Reduction methods
 
 void print_time(clock_t begin, clock_t end){
     float elapsed = (float)(end - begin) / CLOCKS_PER_SEC;
-    printf("%f\n", elapsed);
+    printf("%f\t", elapsed);
 }
 
 // Marsaglia polar method
@@ -88,14 +88,19 @@ void dense_matrix_free(int m, float** A){
 
 void reduce_command(char* inputfile, char* outputfile, char* methodname, int d){
 	int m, n;
-	float **PDense;
-	SparseMatrix *A, *ALower, *D, *P;
+	float **P;
+	SparseMatrix *A, *ALower, *D;
 	clock_t begin;
 
 	// Read Input Matrix
 	begin = clock();	
 	A = sparse_matrix_read(inputfile, &m, &n);
 	print_time(begin, clock());
+	printf("\n");
+
+	// Print time variables
+	printf("Method\t\tDimension\tMatrix (sec)\tProj (sec)\tDistance (sec)\n");
+	printf("%s\t%d\t\t", methodname, d);
 
 	// Instantiate the Lower Dimension (Dimensionality Reduction) Input Matrix
 	ALower = sparse_matrix_create_empty(m, d);
@@ -106,41 +111,39 @@ void reduce_command(char* inputfile, char* outputfile, char* methodname, int d){
 	// Select and run a dimensionality reduction method
 	begin = clock();
 	if(strcmp(methodname, "gaussian") == 0){
-		PDense = create_gaussian(d, n);
+		P = create_gaussian(d, n);
 	}
 	else if(strcmp(methodname, "achlioptas") == 0){
-		PDense = create_achlioptas(d, n);
+		P = create_achlioptas(d, n);
 	}
 	else{
 		printf("Method %s not implemented.\n", methodname);
 		exit(1);
 	}
-	print_time(begin, clock());
-
-	// Convert Project Matrix from Dense to Sparse
-	P = sparse_matrix_create(d, n, PDense);
-	dense_matrix_free(d, PDense);
+	print_time(begin, clock());	
 
 	// Run projection to lower dimension
 	begin = clock();
-	sparse_matrix_multsm(P, A, ALower);
+	sparse_matrix_multdm(A, d, n, P, ALower);
 	print_time(begin, clock());
 
 	// Calculate Distance Matrix
 	begin = clock();
 	sparse_matrix_distances(ALower, D);
 	print_time(begin, clock());
+	printf("\n");
 
 	// Write Distance Matrix
 	begin = clock();
 	sparse_matrix_write(outputfile, D);
 	print_time(begin, clock());
+	printf("\n");
 
 	// Free variables
 	sparse_matrix_free(A);
-	sparse_matrix_free(P);
 	sparse_matrix_free(D);
 	sparse_matrix_free(ALower);
+	dense_matrix_free(d, P);
 }
 
 void distance_command(char* inputfile, char* outputfile){

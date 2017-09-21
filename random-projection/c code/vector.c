@@ -83,6 +83,21 @@ void sparse_vector_free(SparseVector* u){
 	u = NULL;
 }
 
+float sparse_vector_multdv(SparseVector* u, float* v){
+	int i, index;
+	float tot = 0;
+
+	// Only consider indexes of the sparse vector
+	i = 0;
+	for(i = 0; i < u->real_size; i++){
+		index = u->indexes[i];
+		tot += (u->values[i] * v[index]);
+		
+	}
+	
+	return tot;
+}
+
 float sparse_vector_multsv(SparseVector* u, SparseVector* v){
 	int i, j, index_small, index_big;
 	float tot = 0;
