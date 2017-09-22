@@ -93,7 +93,7 @@ void experiment_command(char* bowfile, char* distancefile, int t, char* methodna
 	D = sparse_matrix_read(distancefile, &m, &m);
 
 	// Print Experiment Results Header
-	printf("Method\t\tDimension\tMatrix (sec)\tProj (sec)\tDistance (sec)\tMax Distorsion\n");
+	printf("Method\t\tDimension\tMatrix (sec)\tProj (sec)\tDistance (sec)\tMax Distortion\n");
 
 	// Run all experiments
 	for(i = 0; i < t; i++){
