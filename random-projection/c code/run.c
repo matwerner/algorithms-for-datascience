@@ -75,9 +75,6 @@ void experiment(SparseMatrix* A, SparseMatrix* D, char* methodname, int d){
 	// Print Experiment Results
 	printf("%s\t%d\t\t%f\t%f\t%f\t%f\n", methodname, d, CPU_Time[0], CPU_Time[1], CPU_Time[2], max_distortion);
 
-	sparse_matrix_write("ALower.txt", ALower);
-	sparse_matrix_write("DAprox.txt", DAprox);
-
 	// Free variables
 	sparse_matrix_free(ALower);
 	sparse_matrix_free(DAprox);
