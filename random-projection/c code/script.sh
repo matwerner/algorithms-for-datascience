@@ -1,1 +1,1 @@
-./dimensionality_reduction reduce -i "brown_corpus.txt" -o "output_distance_matrix.txt" -m "gaussian" -d 1024
+./run experiment --bow "brown_corpus.txt" --distance "output_distance_matrix_original.txt" --time 5 --method "gaussian" --dimension 1024

@@ -50,6 +50,11 @@ SparseMatrix* sparse_matrix_create(int m, int n, float** rows){
 	return A;
 }
 
+void sparse_matrix_get_shape(SparseMatrix* A, int *m, int *n){
+	*m = A->n_rows;
+	*n = A->n_columns;
+}
+
 void sparse_matrix_free(SparseMatrix* A){
 	int i;
 
@@ -182,7 +187,7 @@ SparseMatrix* sparse_matrix_read(char* filename, int* m, int* n){
 	// Open file
 	pFile = fopen(filename, "r");
 	if (pFile == NULL){
-		printf("Error: file pointer is null.");
+		printf("Error: file pointer is null.\n");
 		exit(1);
 	}
 
@@ -222,7 +227,7 @@ void sparse_matrix_write(char* filename, SparseMatrix* A){
 	// Open file
 	pFile = fopen(filename, "w");
 	if (pFile == NULL){
-		printf("Error: file pointer is null.");
+		printf("Error: file pointer is null.\n");
 		exit(1);
 	}
 

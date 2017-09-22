@@ -1,3 +1,6 @@
+#ifndef VECTOR_H
+#define VECTOR_H
+
 /*
 Created on Sep 19, 2017
 
@@ -16,3 +19,5 @@ float sparse_vector_multsv(SparseVector* u, SparseVector *v);
 float sparse_vector_square_distance(SparseVector* u, SparseVector* v);
 float* sparse_vector_todense(SparseVector* u, int* n);
 void sparse_vector_show(SparseVector* u);
+
+#endif
