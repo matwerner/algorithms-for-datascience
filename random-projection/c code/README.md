@@ -1,5 +1,5 @@
 # Random Projection
-After compiling the code, the following commands area available:
+After compiling the code, the following commands are available:
 * Experiment
 * Distance
 
