@@ -1,4 +1,6 @@
 *.pyc
 *.o
-*/*/bow.txt
 *bow.txt
+*g1_corpus.txt
+*distance_matrix.txt
+

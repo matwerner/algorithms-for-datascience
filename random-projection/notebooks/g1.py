@@ -23,7 +23,7 @@ def g1_url2id(url):
 
 
 
-def get_sentences(verbose=True):
+def get_sentences(verbose=True, limit_documents=3000):
 	'''
 		Get g1 corpora as nested list (corpora) of list (words)
 	'''
@@ -59,7 +59,7 @@ def get_sentences(verbose=True):
 
 
 
-def get_documents(verbose=False): 
+def get_documents(verbose=False, limit_documents=3000): 
 	'''
 		Gets g1 articles as documents
 
@@ -69,6 +69,9 @@ def get_documents(verbose=False):
 
 	'''
 	#iterates all documents withing corpus adding sentences 
+	if not limit_documents: 
+		limit_documents= 1e10
+
 	datasets_path= '../../random-projection/datasets/'
 	g1filename= '4000_g1_articles.json'
 	g1_path= datasets_path + g1filename 
@@ -83,19 +86,20 @@ def get_documents(verbose=False):
 		articles = json.load(data_file, encoding='utf-8')
 		
 	for a, article in enumerate(articles):
-		g1_id= g1_url2id( article["URL"] ) 
-		# print article["URL"]
-		sentences= article["TEXT"].split('.')		#splits phrases
-		# import code; code.interact(local=dict(globals(), **locals()))
-		sentences= list(map(to_word, sentences))			#splits phrases into words	
-		vocab= vocab.union(set([word for sentence in sentences for word in sentence]))
-		g1docs[g1_id]= sentences
+		if a<limit_documents: 
+			g1_id= g1_url2id( article["URL"] ) 
+			# print article["URL"]
+			sentences= article["TEXT"].split('.')		#splits phrases
+			# import code; code.interact(local=dict(globals(), **locals()))
+			sentences= list(map(to_word, sentences))			#splits phrases into words	
+			vocab= vocab.union(set([word for sentence in sentences for word in sentence]))
+			g1docs[g1_id]= sentences
 
-		total_words+= sum(map(len,sentences))
+			total_words+= sum(map(len,sentences))
 
-		if verbose: 
-			sys.stdout.write('article:%s of 4000\tV:%s\tWORD COUNT:%s\tdocid:%s\r' % (format(a + 1, '04d'), format(len(vocab),'05d'), format(total_words,'05d'), g1_id))
-			sys.stdout.flush()			
+			if verbose: 
+				sys.stdout.write('article:%s of %s\tV:%s\tWORD COUNT:%s\tdocid:%s\r' % (format(a + 1, '04d'), format(limit_documents, '04d'),format(len(vocab),'05d'), format(total_words,'05d'), g1_id))
+				sys.stdout.flush()			
 	print('')
 	return g1docs
 
