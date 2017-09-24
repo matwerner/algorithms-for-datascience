@@ -10,12 +10,12 @@ apply random projection algorithm to reduce to a given number of dimensionalitie
 and them calculates the maximum distortion between the original and approximated
 distance matrices.
 
-./run experiment --bow "<bow-path>" --distance "<distance-matrix-path>" 
-	--time <number-of-experiments> --method <gaussian|dimension>
-	--dimension <new-number-of-dimensions>
+./run experiment --bow \<bow-path>\ --distance \<distance-matrix-path>\
+	--time \<number-of-experiments> --method \<gaussian|dimension>
+	--dimension \<new-number-of-dimensions>
 
 ## Distance
 
 From the original bag of words, calculates the distance between all pairs of vectors.
 
-./run distance --bow "<bow-path>" --distance "<distance-matrix-path>"
+./run distance --bow \<bow-path> --distance \<distance-matrix-path>
