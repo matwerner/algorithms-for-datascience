@@ -10,7 +10,7 @@ apply random projection algorithm to reduce to a given number of dimensionalitie
 and them calculates the maximum distortion between the original and approximated
 distance matrices.
 
-./run experiment --bow \<bow-path>\ --distance \<distance-matrix-path>\
+./run experiment --bow \<bow-path> --distance \<distance-matrix-path>\
 	--time \<number-of-experiments> --method \<gaussian|dimension>
 	--dimension \<new-number-of-dimensions>
 
