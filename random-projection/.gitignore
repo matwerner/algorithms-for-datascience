@@ -1,4 +1,4 @@
 *.pyc
 *.o
 */*/bow.txt
-
+*bow.txt
