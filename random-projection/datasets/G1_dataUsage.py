@@ -43,16 +43,16 @@ def print_article(pattern= 'acre-decreta-expediente-corrido-nas-vesperas-de-nata
     if prog.search(article['URL']):    
       print(article['TEXT'])
 
-    sentences= article['TEXT'].split('. ')
-    words=[] 
-    approx_word_count=0
-    vocabulary=set([])
-    for sentence in sentences:
-      sentence_words= sentence.split(' ')
-      words+= sentence_words
-      approx_word_count+= len(sentence_words)
+      sentences= article['TEXT'].split('. ')
+      words=[] 
+      approx_word_count=0
+      vocabulary=set([])
+      for sentence in sentences:
+        sentence_words= sentence.split(' ')
+        words+= sentence_words
+        approx_word_count+= len(sentence_words)
 
-      vocabulary= vocabulary.union(set(words))    
+        vocabulary= vocabulary.union(set(words))    
   print('#article: ', pattern)
   print('#approx vocabulary: ', len(vocabulary))
   print('#approx word_count: ', approx_word_count)
@@ -75,7 +75,8 @@ def print_article(pattern= 'acre-decreta-expediente-corrido-nas-vesperas-de-nata
 
 def main():
   # print_corpus_stats()
-  print_article()
+  pattern='darcy-e-nogueira-cumprem-agenda-em-ribeirao-preto-neste-domingo'
+  print_article(pattern=pattern)
 
 if __name__ == '__main__':
   main()
