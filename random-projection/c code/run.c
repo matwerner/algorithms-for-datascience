@@ -28,25 +28,44 @@ static void dense_matrix_free(int m, float** A){
 	free(A);
 }
 
-static float distance_max_distortion(int m, float** A, float** B){
-	int i, j;
-	float distortion, max_distortion = 0;
+static float distance_max_distortion_theoretical(int m, int n, float prob){
+	return sqrt(6.0 * log(pow(m, 2.0)/prob)/n);
+}
 
+static void distance_distortion_statistics(int m, float** A, float** B, float theoretical, \
+					float* max_distortion, float *avg_distortion, float *upper_max_distortion){
+	int i, j, n;
+	float distortion;
+
+	// Reset values
+	*max_distortion = 0;
+	*avg_distortion = 0;
+	*upper_max_distortion = 0;
 	for(i = 0; i < m; i++){
 		for(j = i+1; j < m; j++){
 			distortion = fabs((A[i][j] / B[i][j]) - 1);
-			if(distortion > max_distortion){
-				max_distortion = distortion;
+			// Get maximum distortion
+			if(distortion > *max_distortion){
+				*max_distortion = distortion;
 			}
+			// Check how many values surpass the theoretical max distance
+			if(distortion > theoretical){
+				(*upper_max_distortion)++;
+			}
+			// Sum all distortion, when finished take the mean
+			*avg_distortion+=distortion;
+			n++;
 		}
 	}
 
-	return max_distortion;
+	// Get mean
+	(*avg_distortion)/=n;
+	(*upper_max_distortion)/=n;
 }
 
 void experiment(SparseMatrix* A, SparseMatrix* D, char* methodname, int d){
 	int m, n;
-	float CPU_Time[3], **DDense, **DAproxDense, max_distortion;
+	float **DDense, **DAproxDense, CPU_Time[3], max_distortion, avg_distortion, upper_max_distortion, theoretical_max_distortion;
 	SparseMatrix *ALower, *DAprox;
 	clock_t start;
 
@@ -67,13 +86,16 @@ void experiment(SparseMatrix* A, SparseMatrix* D, char* methodname, int d){
 	sparse_matrix_distances(ALower, DAprox);
 	CPU_Time[2] = calculate_cpu_time(start, clock());
 
-	// Calculate Max Distorcion
+	// Calculate Distortion Statistics
 	DDense = sparse_matrix_todense(D, &m, &m);
 	DAproxDense = sparse_matrix_todense(DAprox, &m, &m);
-	max_distortion = distance_max_distortion(m, DAproxDense, DDense);
+	theoretical_max_distortion = distance_max_distortion_theoretical(m, d, 0.001);
+	distance_distortion_statistics(m, DAproxDense, DDense, theoretical_max_distortion, \
+					&max_distortion, &avg_distortion, &upper_max_distortion);
 
 	// Print Experiment Results
-	printf("%s\t%d\t\t%f\t%f\t%f\t%f\n", methodname, d, CPU_Time[0], CPU_Time[1], CPU_Time[2], max_distortion);
+	printf("%s\t%d\t\t%f\t%f\t%f\t%f\t%f\t%f\t\t%f\n", methodname, d, CPU_Time[0], CPU_Time[1], CPU_Time[2], \
+							avg_distortion, max_distortion, theoretical_max_distortion, upper_max_distortion);
 
 	// Free variables
 	sparse_matrix_free(ALower);
@@ -93,7 +115,7 @@ void experiment_command(char* bowfile, char* distancefile, int t, char* methodna
 	D = sparse_matrix_read(distancefile, &m, &m);
 
 	// Print Experiment Results Header
-	printf("Method\t\tDimension\tMatrix (sec)\tProj (sec)\tDistance (sec)\tMax Distortion\n");
+	printf("Method\t\tDimension\tMatrix (sec)\tProj (sec)\tDistance (sec)\tAvg Distortion\tMax Distortion\tTheoretical Distortion\tAbove Distortion\n");
 
 	// Run all experiments
 	for(i = 0; i < t; i++){
@@ -107,7 +129,9 @@ void experiment_command(char* bowfile, char* distancefile, int t, char* methodna
 
 void distance_command(char* inputfile, char* outputfile){
 	int m, n;
+	float cpu_time;
 	SparseMatrix *A, *D;
+	clock_t start;
 
 	// Read Input Matrix
 	A = sparse_matrix_read(inputfile, &m, &n);
@@ -116,7 +140,13 @@ void distance_command(char* inputfile, char* outputfile){
 	D = sparse_matrix_create_empty(m, m);
 
 	// Calculate Distance Matrix
+	start = clock();
 	sparse_matrix_distances(A, D);
+	cpu_time = calculate_cpu_time(start, clock());
+
+	// Print Experiment Results Header
+	printf("Method\t\tDistance (sec)\n");
+	printf("Brutal Force\t%f\n", cpu_time);
 
 	// Write Distance Matrix
 	sparse_matrix_write(outputfile, D);

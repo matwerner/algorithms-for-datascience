@@ -49,7 +49,7 @@ static float rand_normal(float mu, float sigma){
 }
 
 static float** create_gaussian(int m, int n){
-	float** A, factor = sqrt(n/m), mu = 0, sigma = 1/sqrt(n);
+	float** A, factor = sqrt(n/(float)m), mu = 0., sigma = 1./sqrt((float)n);
 	int i,j;
 	A = (float**)malloc(sizeof(float*)*m);
 	for( i = 0; i < m; i++){
@@ -62,7 +62,7 @@ static float** create_gaussian(int m, int n){
 }
 
 static float** create_achlioptas(int m, int n){
-	float** A, random, factor = sqrt(n/m), c = sqrt(3./n);
+	float** A, random, factor = sqrt(n/(float)m), c = sqrt(3./(float)n);
 	int i,j;
 	A = (float**)malloc(sizeof(float*)*m);
 	for( i = 0; i < m; i++){
