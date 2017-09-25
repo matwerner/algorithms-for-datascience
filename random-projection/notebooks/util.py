@@ -10,6 +10,7 @@ motivation: useful cross module corpora functions; such as tokenization
 import string
 import unidecode 
 
+
 import numpy as np
 import pandas as pd 
 import sys
@@ -76,7 +77,7 @@ def documents2bag_of_words(documents, tokenize=True, verbose=True, exclude_links
 	if exclude_links:
 		matcher= re.compile(r"""((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,‌​3}[.]|[a-z0-9.\-]+[.‌​][a-z]{2,4}/)(?:[^\s‌​()<>]+|(([^\s()<‌​>]+|(([^\s()<>]+‌​)))*))+(?:&#‌​40;([^\s()<>]+|((‌​;[^\s()<>]+)))*&‌​#41;|[^\s`!()[&#‌​93;{};:'".,<>?«»“”‘’‌​]))""", re.DOTALL)
 
-	for doc_id, doc in documents.iteritems():
+	for doc_id, doc in documents.items():
 		# BEWARE OF DATA LOSS: Flattening the arrays and missing the information of sentence begin and end		
 		sentences = flatten(doc)
 		if tokenize:
@@ -136,11 +137,19 @@ def remove_puctuation(s):
 		s is a string with punctuation; converts unicode to string which might get data loss
 			url: https://stackoverflow.com/questions/23175809/typeerror-translate-takes-one-argument-2-given-python
 					 https://pypi.python.org/pypi/Unidecode
+					 https://stackoverflow.com/questions/34293875/how-to-remove-punctuation-marks-from-a-string-in-python-3-x-using-translate
 	'''	
 	# return str(s).translate(None, string.punctuation)
 	s = unidecode.unidecode(s) # Converts unicode s into closest ascii s, removes accents
 	if s: 
-		s= s.translate(None, string.punctuation) # removes punctuation
+		# This uses the 3-argument version of str.maketrans
+		# with arguments (x, y, z) where 'x' and 'y'
+		# must be equal-length strings and characters in 'x'
+		# are replaced by characters in 'y'. 'z'
+		# is a string (string.punctuation here)
+		# where each character in the string is mapped
+		# to None
+		s= s.translate(str.maketrans('','',string.punctuation)) # removes punctuation
 	return s
 
 def sentences2indexed_sentences(sentences, word2idx={}):
