@@ -73,7 +73,8 @@ def documents2bag_of_words(documents, tokenize=True, verbose=True, exclude_links
 	doc2freq={} 
 	doc2idx= {} 
 	stopwords = get_stopwords(lang=lang)
-	
+	stopwords2 = list(tokenizer(stopwords, stopwords=[])) + [' ']
+	print(stopwords2)
 	if exclude_links:
 		matcher= re.compile(r"""((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,‌​3}[.]|[a-z0-9.\-]+[.‌​][a-z]{2,4}/)(?:[^\s‌​()<>]+|(([^\s()<‌​>]+|(([^\s()<>]+‌​)))*))+(?:&#‌​40;([^\s()<>]+|((‌​;[^\s()<>]+)))*&‌​#41;|[^\s`!()[&#‌​93;{};:'".,<>?«»“”‘’‌​]))""", re.DOTALL)
 
@@ -82,9 +83,9 @@ def documents2bag_of_words(documents, tokenize=True, verbose=True, exclude_links
 		sentences = flatten(doc)
 		if tokenize:
 			if exclude_links:
-				sentences = tokenizer(sentences, stopwords=stopwords, exclude_matcher=matcher)			
+				sentences = tokenizer(sentences, stopwords=stopwords2, exclude_matcher=matcher)			
 			else:
-				sentences = tokenizer(sentences, stopwords=stopwords)			
+				sentences = tokenizer(sentences, stopwords=stopwords2)			
 
 		indexed_sentences, word2idx = sentences2indexed_sentences(sentences, word2idx=word2idx)
 		indices, idx_freq =indexed_sentences2idx_freq(indexed_sentences)
@@ -119,10 +120,11 @@ def tokenizer(tokens, stopwords=None, exclude_matcher=None):
 		tokens = filter(None, tokens)
 
 	tokens = [t.lower() for t in tokens] 		# to lowercase
-
-	tokens = [remove_puctuation(t) for t in tokens] 
+	tokens = [remove_puctuation(t) for t in tokens] 	
 	tokens = [t for t in tokens if t not in stopwords] # remove stopwords
+	
 	tokens = filter(None, tokens)
+	
 	
 
 	return tokens
@@ -172,6 +174,7 @@ def sentences2indexed_sentences(sentences, word2idx={}):
 		idx=0
 	else:
 		idx= max(word2idx.values())+1 
+
 
 	indexed_sentences=[] 
 	for token in sentences: 

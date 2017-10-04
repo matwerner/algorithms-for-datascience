@@ -1,0 +1,33 @@
+\textbf{x}_i\textbf{x}^T_j = -\frac{1}{2}\bigg[ d^2_{ij} - \frac{1}{n}\sum\limits_i^n d^2_{ij} - \frac{1}{n}\sum\limits_j^n d^2_{ij} + \frac{1}{n^2}\sum\limits_i^n \sum\limits_j^n d^2_{ij}\bigg]
+
+d^2_{ij} = \bigg[  \sum^d_k \left(x_{ik} - x_{jk} \right)^2\bigg]
+
+d^2_{ij} = \textbf{x}_i \cdot\textbf{x}_i + \textbf{x}_j\cdot\textbf{x}_j - 2\textbf{x}_i\cdot\textbf{x}_j
+
+\frac{1}{n}\sum\limits_i^n d^2_{ij} = 
+\frac{1}{n}\big(\textbf{x}_i \cdot\textbf{x}_i + \textbf{x}_1\cdot\textbf{x}_1 - 2\textbf{x}_i\cdot\textbf{x}_1 + 
+\textbf{x}_i \cdot\textbf{x}_i + \textbf{x}_2\cdot\textbf{x}_2 - 2\textbf{x}_i\cdot\textbf{x}_2 + \dots
+\textbf{x}_i \cdot\textbf{x}_i + \textbf{x}_n\cdot\textbf{x}_n - 2\textbf{x}_i\cdot\textbf{x}_n \big)
+
+\frac{1}{n}\big\{n\textbf{x}_i \cdot\big[\textbf{x}_i -2\big(\textbf{x}_1 +\textbf{x}_2 + \dots + \textbf{x}_n \big) \big]  + \big( \textbf{x}_1\cdot\textbf{x}_1 + 
+\textbf{x}_2\cdot\textbf{x}_2 + \dots + \textbf{x}_n\cdot\textbf{x}_n \big) \big\}
+
+
+\frac{1}{n}\sum\limits_i^n d^2_{ij} = 
+\frac{1}{n}\big\{n\textbf{x}_i \cdot\textbf{x}_i  + \big( \textbf{x}_1\cdot\textbf{x}_1 + 
+\textbf{x}_2\cdot\textbf{x}_2 + \dots + \textbf{x}_n\cdot\textbf{x}_n \big) \big\}=
+
+\textbf{x}_i\cdot\textbf{x}_i +  \frac{1}{n}\left(  \textbf{x}_1\cdot\textbf{x}_1 + \textbf{x}_2\cdot\textbf{x}_2 + \dots + 
+\textbf{x}_n\cdot\textbf{x}_n \right)= 
+
+\textbf{x}_i\cdot\textbf{x}_i +  \frac{1}{n}\left(  SSQ \right)= 
+
+
+
+\frac{1}{n}\sum\limits_j^n d^2_{ij} = \textbf{x}_j\cdot\textbf{x}_j +  MSQ 
+
+\frac{1}{n^2}\sum\limits_i^n\sum\limits_j^n d^2_{ij} = 2MSQ 
+
+ \textbf{x}_i\cdot\textbf{x}_j = -\frac{1}{2}\bigg[d^2_{ij} - \bigg( \frac{1}{n}\sum\limits_i^n d^2_{ij} - MSQ\bigg) - \bigg( \frac{1}{n}\sum\limits_j^n d^2_{ij} - MSQ\bigg)\bigg]
+
+ \textbf{x}_i\cdot\textbf{x}_j = -\frac{1}{2}\bigg(d^2_{ij} - \frac{1}{n}\sum\limits_i^n d^2_{ij} - \frac{1}{n}\sum\limits_j^n d^2_{ij} + \frac{1}{n^2} \sum\limits_j^n\sum\limits_i^n d^2_{ij}\bigg)
