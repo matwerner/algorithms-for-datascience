@@ -28,6 +28,8 @@ d^2_{ij} = \textbf{x}_i \cdot\textbf{x}_i + \textbf{x}_j\cdot\textbf{x}_j - 2\te
 
 \frac{1}{n^2}\sum\limits_i^n\sum\limits_j^n d^2_{ij} = 2MSQ 
 
+=\frac{1}{n^2}\sum\limits_i^n n\textbf{x}_i\cdot\textbf{x}_i +  SSQ= \frac{1}{n^2}\left(  nSSQ + nSSQ \right) = 2MSQ
+
  \textbf{x}_i\cdot\textbf{x}_j = -\frac{1}{2}\bigg[d^2_{ij} - \bigg( \frac{1}{n}\sum\limits_i^n d^2_{ij} - MSQ\bigg) - \bigg( \frac{1}{n}\sum\limits_j^n d^2_{ij} - MSQ\bigg)\bigg]
 
  \textbf{x}_i\cdot\textbf{x}_j = -\frac{1}{2}\bigg(d^2_{ij} - \frac{1}{n}\sum\limits_i^n d^2_{ij} - \frac{1}{n}\sum\limits_j^n d^2_{ij} + \frac{1}{n^2} \sum\limits_j^n\sum\limits_i^n d^2_{ij}\bigg)
