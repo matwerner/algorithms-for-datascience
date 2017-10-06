@@ -23,42 +23,50 @@ D = np.array([
 ])
 
 print(D)		
-n_cities= len(D)
+n= len(D)
 nssq= 0 
 # COMPUTE MEAN SQUARE DISTANCES
-for i in range(n_cities):
-	for j in range(n_cities): 
+for i in range(n):
+	for j in range(n): 
 		nssq += D[i,j]**2
 
-msq = nssq / (2*(n_cities**2))
+msq = nssq / (2*(n**2))
 
 # COMPUTE TRACE
 XXT = np.zeros(D.shape, dtype=np.int32)
-for i in range(n_cities):
+for i in range(n):
 	xxi= 0 
-	for j in range(n_cities): 
+	for j in range(n): 
 		xxi += D[j,i]**2
-	XXT[i,i] = xxi / n_cities - msq
+	XXT[i,i] = xxi / n - msq
 
 # COMPUTE OUTER DIAGONALS
-for i in range(n_cities):	
-	for j in range(i+1,n_cities): 
+for i in range(n):	
+	for j in range(i+1,n): 
 		XXT[i,j] = -0.5*(D[i,j]**2 - XXT[i,i] - XXT[j,j])
 		XXT[j,i] = XXT[i,j]
 
 
 # POWER METHOD II see BLUM, Foundations of datascience exercices 3.30
 B = XXT.astype(np.float32) 
+d = n 
+r = n
+
+if r > n or r > d: 
+	print(' r[%d] <= n[%d] and r[%d] <= d[%d]' %(r,n,r,d))
+
 eps= 10e-10
 residuals= {} 
 flags= []
 iterations= []
-V = np.zeros(B.shape, dtype=np.float32)
 S = np.zeros(B.shape, dtype=np.float32)
+U = np.zeros(B.shape, dtype=np.float32)
+V = np.zeros(B.shape, dtype=np.float32)
+
 kmax=1000
-for i in range(n_cities): 
+for i in range(n): 
 	k=0
-	vi = np.random.rand(n_cities) 
+	vi = np.random.rand(n) 
 	vi = vi / norm(vi)
 	first= True 
 
@@ -78,8 +86,9 @@ for i in range(n_cities):
 	print('')
 	S[i,i]= norm(B.dot(vi))
 	V[i,:]= vi 
+	U[:,i]= vi 
 
-	vi= vi.reshape(n_cities,1)
+	vi= vi.reshape(n,1)
 	B -= (S[i,i])*(vi*vi.T) 
 
 
@@ -94,8 +103,17 @@ print('%===========================V - experimental=========================%')
 print(V)
 print('%===========================V - theoretical==========================%')	
 print(v)
+print('%===========================U - theoretical=========================%')	
+print(u)
+print('%===========================X - theoretical==========================%')	
+X = (u[:,:r] * s[:r])
+# X = (np.diag(S)[:-1]*V[:-1,:].T)
+print(X)
+# x = s*v.T 
+# print(x)
+# print(np.allclose(X , x[:,:-1]))
 print('%===========================V - CLOSE=================================%')	
-print(np.allclose(V[:-1,:],v[:-1,:])) 
+# print(np.allclose(V[:-1,:],v[:-1,:])) 
 print('%============================RESIDUALS================================%')	
 print(list(residuals.values()))
 print('%========================CONVERGENCE FLAGS=============================%')	
