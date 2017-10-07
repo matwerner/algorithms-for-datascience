@@ -1,0 +1,58 @@
+# -*- coding: utf-8 -*-
+import numpy as np
+
+MATRIX_SHAPE = (20,10)
+
+def algorithm(D):
+
+    # COMPUTE MSQ
+    NSSQ=0
+    for i in range(MATRIX_SHAPE[0]):
+        for j in range(MATRIX_SHAPE[1]):
+            NSSQ = NSSQ + D[i,j] * D[i,j]
+    
+    MSQ = NSSQ/2*MATRIX_SHAPE[0]*MATRIX_SHAPE[1]
+
+    # COMPUTE TRACE
+    
+    # TODO - Aqui a nossa matriz não é simetrica completamente, os pontos na diagonal que são 0, i.e - distancia de LA com LA é só nos primeiros 10x10
+    # TODO - Mudei o loop para pegar a primeira submatriz 10x10
+    XXT = np.zeros(MATRIX_SHAPE)
+    for i in range(10):
+        xx_i = 0
+        for j in range(10):
+            xx_i =  xx_i + D[i,j]
+        XXT[i,i] = xx_i - MSQ
+
+    # COMPUTE OTHER DIAGONALS
+
+    # TODO - Aqui não é para ignorar as diagonais?
+    for i in range(MATRIX_SHAPE[0]):
+        for j in range(MATRIX_SHAPE[1]):
+            # TODO - não tenho certeza de que entendi a letra no rascunho dessa parte
+            # TODO XXT[j,j] é out of bounds inexoravelmente
+            XXT[i,j] = -0.5 * (D[i,j]*D[i,j] - XXT[i,i] - XXT[j,j])
+
+    return XXT
+
+# Build matrix from file
+file = open("matrix.txt","r")
+
+matrix = []
+for rawLine in file:
+    line = rawLine.strip()
+    if line:
+        if line is "-":
+            matrix.append(0.0);
+        else:
+            matrix.append(float(line))
+
+matrix = np.array(matrix, float)
+
+matrix.shape = MATRIX_SHAPE
+
+matrix = np.matrix(matrix)
+
+print algorithm(matrix)
+
+
