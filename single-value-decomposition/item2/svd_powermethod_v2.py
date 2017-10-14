@@ -9,42 +9,61 @@ motivation: The power method to SVD
 
 '''
 
-
 import sys 
 import numpy as np 
 from numpy.linalg import norm 
-# testing with boston, buffalo, chicago, dallas, denver
-D = np.array([
-	[0, 		400,  851, 1551, 1769],
-	[400, 	  0,  454, 1198, 1370],
-	[ 851,  454, 	  0, 803, 	920],
-	[1551, 1198, 	803, 	 0, 	663],
-	[1769, 1370, 	920, 663, 		0]
-])
 
-print(D)		
-n= len(D)
-nssq= 0 
-sd2=0 
-MD2= np.zeros(n,dtype=np.int32)
 
-# COMPUTE MEAN SQUARE DISTANCES
-for i in range(n):
+def computeXXT(D):
+	n= len(D)
+	nssq= 0 
 	sd2=0 
-	for j in range(n): 
-		sd2 += D[i,j]*D[i,j]
-	MD2[i] = float(sd2)/n 
-	nssq += sd2
+	MD2= np.zeros(n,dtype=np.int32)
 
-msq = nssq / (2*(n**2))
+	# COMPUTE MEAN SQUARE DISTANCES
+	for i in range(n):
+		sd2=0 
+		for j in range(n): 
+			sd2 += D[i,j]*D[i,j]
+		MD2[i] = float(sd2)/n 
+		nssq += sd2
 
-# COMPUTE OUTER DIAGONALS
-XXT = np.zeros(D.shape, dtype=np.int32)
-for i in range(n):	
-	for j in range(n): 
-		XXT[j,i] = -0.5*(D[i,j]*D[i,j] - MD2[i] - MD2[j] + 2*msq)
+	msq = nssq / (2*(n**2))
 
-print(XXT)
+	# COMPUTE OUTER DIAGONALS
+	XXT = np.zeros(D.shape, dtype=np.int32)
+	for i in range(n):	
+		for j in range(n): 
+			XXT[j,i] = -0.5*(D[i,j]*D[i,j] - MD2[i] - MD2[j] + 2*msq)
+	return XXT
+
+def computeX(XXT, d):			
+	U, S, V = np.linalg.svd(XXT)
+	# X = U[:,:d].dot(np.sqrt(S[:d]))
+	n = len(XXT)
+	X = np.zeros((n,d), dtype=np.int32)
+	for i in range(n):
+		for j in range(d):
+			X[i,j] = U[i,j]*S[j]
+	return X
+
+if __name__ == '__main__':
+
+	# testing with boston, buffalo, chicago, dallas, denver
+	D = np.array([
+		[0, 		400,  851, 1551, 1769],
+		[400, 	  0,  454, 1198, 1370],
+		[ 851,  454, 	  0, 803, 	920],
+		[1551, 1198, 	803, 	 0, 	663],
+		[1769, 1370, 	920, 663, 		0]
+	])	
+	print(D)		
+	XXT = computeXXT(D)
+	print(XXT)
+	X = computeX(D,2) 
+	print(X)
+
+
 # POWER METHOD II see BLUM, Foundations of datascience exercices 3.30
 # B = XXT.astype(np.float32) 	
 # d = n 
