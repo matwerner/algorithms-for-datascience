@@ -1,0 +1,23 @@
+B= XXT % matrix nxn 
+r = n
+tol = 1e-10
+S <-- zeros(r,r)
+V <-- zeros(r,d)
+U <-- zeros(n,r)
+
+
+for i=1 ...r 
+	first= true
+	vi <-- randn(r,1).normalize()
+	while first or |vi-v0|> tol 
+		v0 = vi 
+		vi = (B*vi).normalize()
+
+
+	S[i] = |(B*vi)|
+	V[i,:]= vi	
+	U[:,i]= vi.T
+	B-= S[i]*vi*vi.T
+
+X = U*sqrt(S)
+%X =sqrt(S)*V.T 
