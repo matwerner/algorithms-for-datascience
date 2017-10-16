@@ -24,8 +24,8 @@ A matriz X n-por-d cujas linhas s\~{a}o as coordenadas ($x_{i}$ com $i=1...d$) d
 //Compute MSQ\;
 $\text{n} \longleftarrow sizeof(D)$\;
 $\text{MSQ} \longleftarrow zeros(n)$ //mean of squares of distances for column or row\;
-
 $\text{XXT} \longleftarrow zeros(n,n)$ //position matrix times position transposed\;
+$\text{X} \longleftarrow zeros(n,d)$ //position matrix\;
 $\text{nssq} \longleftarrow 0$//n times sum of squares of distances\; 
 
 
