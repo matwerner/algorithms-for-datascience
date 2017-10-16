@@ -60,3 +60,13 @@ matrix = np.matrix(matrix)
 #print matrix
 
 print algorithm(matrix)
+
+
+m =  algorithm(matrix)
+
+m = m[0:2,:]
+print len(m[0])
+import matplotlib.pyplot as plt
+plt.plot(m[0,:], m[1,:], 'ro')
+plt.axis([-10, 10, -10, 10])
+plt.show()
