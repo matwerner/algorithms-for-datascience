@@ -12,7 +12,7 @@ motivation: The power method to SVD
 import sys 
 import numpy as np 
 from numpy.linalg import norm 
-
+import matplotlib.pyplot as plt
 
 def computeXXT(D):
 	n= len(D)
@@ -50,19 +50,74 @@ def computeX(XXT, d):
 if __name__ == '__main__':
 
 	# testing with boston, buffalo, chicago, dallas, denver
-	D = np.array([
-		[0, 		400,  851, 1551, 1769],
-		[400, 	  0,  454, 1198, 1370],
-		[ 851,  454, 	  0, 803, 	920],
-		[1551, 1198, 	803, 	 0, 	663],
-		[1769, 1370, 	920, 663, 		0]
-	])	
-	print(D)		
-	XXT = computeXXT(D)
-	print(XXT)
+	file = open("matrix.txt","r")
+
+	matrix = []
+	for rawLine in file:
+		line = rawLine.strip()
+		if line:
+			if "-" in line:
+				matrix.append(0.0);
+			else:
+				matrix.append(float(line))
+
+	matrix = np.array(matrix, float)
+
+	matrix.shape = (20,20)
+
+	matrix = np.matrix(matrix)
+	D = matrix
+
 	X = computeX(D,2) 
 	print(X)
+	
+	rot= np.array([[0,-1],[1,0]],float)
 
+	rotated = []
+	for point in X :
+		t = np.array([[point[0]],[point[1]]],float)
+
+		print "Point"
+		print point
+		print "Transpose"
+		print t
+		print "Rotated"
+		r = np.matmul(rot,t)
+		print r
+		rotated.append([r[0][0],r[1][0]])
+	
+	rotated = np.matrix(rotated)
+	print  rotated
+	x = rotated[:,0]
+	y = rotated[:,1]
+
+	fig, ax = plt.subplots()
+	ax.scatter(x, y)	
+	labels = ["Boston"
+	,"Buffalo"
+	,"Chicago"
+	,"Dallas"
+	,"Denver"
+	,"Houston"
+	,"Los Angeles"
+	,"Memphis"
+	,"Miami"
+	,"Minneapolis"
+	,"New York"
+	,"Omaha"
+	,"Philadelphia"
+	,"Phoenix"
+	,"Pittsburgh"
+	,"Saint Louis"
+	,"Salt Lake City"
+	,"San Francisco"
+	,"Seattle"
+    ,"Washington D.C."]
+
+	for i, txt in enumerate(labels):
+    		ax.annotate(txt, (x[i],y[i]))
+
+	plt.show()
 
 # POWER METHOD II see BLUM, Foundations of datascience exercices 3.30
 # B = XXT.astype(np.float32) 	
@@ -135,11 +190,3 @@ if __name__ == '__main__':
 # print(list(residuals.values()))
 # print('%========================CONVERGENCE FLAGS=============================%')	
 # print(flags)
-
-
-
-
-
-
-
-
