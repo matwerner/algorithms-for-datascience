@@ -109,30 +109,31 @@ if __name__ == '__main__':
 	Xr = rotate_counterclockwise(X, 180)
 
 	# import code; code.interact(local=dict(globals(), **locals()))
-	Xr = normalize(Xr, origin='img')
+	Xr = normalize(Xr, origin='center')
 	# Yr = rotate_counterclockwise(Yn,  45)
 	print(Xr)
-	img = plt.imread('../img/usa2.png')
+	img = plt.imread('../img/usamap.png')
 	print(img.shape)
 	height= img.shape[0]
 	width = img.shape[1]
 
 	# for images top-left is zero
 	# for algos origin is center
-	imgscale = 0.95*np.array([[width, height]]) # 0.95 compensates for the frame
+	imgscale = 0.92*np.array([[width, -height]]) # 0.95 compensates for the frame
 	imgfactor= np.tile(imgscale, (n,1))
-	imgscale = np.array([[0.5*width, 0.5*height]])
+	imgscale = np.array([[0.6*width, 0.6*height]])
 	imgintercept= np.tile(imgscale, (n,1))
 	# print(Xr)
 	Xs = imgfactor * Xr + imgintercept#scaled X
-	# print(Xs)
+	print(Xs)
 	# fig = plt.figure(figsize=(6,9))
 	
-	fig, ax = plt.subplots(2,1)
-	implot = ax[0].imshow(img, origin='upper')
-	ax[1].scatter(Xs[:,0], Xs[:,1], c='r', s=1)
+	# fig, ax = plt.subplots(2,1)
+	fig, ax = plt.subplots()
+	implot = ax.imshow(img, origin='upper')
+	ax.scatter(Xs[:,0], Xs[:,1], c='r', s=1)
 	for i, txt in enumerate(labels):
-		ax[1].annotate(txt, (Xs[i,0],Xs[i,1]), fontsize=8)
+		ax.annotate(txt, (Xs[i,0],Xs[i,1]), fontsize=6)
 
 	plt.show()
 	# ax[1].scatter(Yr[:,0], Yr[:,1], c='g')
