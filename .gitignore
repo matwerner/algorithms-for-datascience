@@ -1,0 +1,7 @@
+*.pyc
+*.o
+*bow.txt
+*distance_matrix.txt
+*corpus.txt
+*corpora.txt
+
