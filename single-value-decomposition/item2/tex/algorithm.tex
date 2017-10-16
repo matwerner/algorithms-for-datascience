@@ -1,0 +1,81 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage[linesnumbered,lined,boxed,commentsnumbered]{algorithm2e}
+\usepackage{color}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\begin{document}
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\KwData
+{
+Matriz D de dist\^{a}ncias entre as cidades.
+}
+\KwResult
+{
+A matriz X cujas linhas s\~{a}o as coordenadas ($x_{i}$) das cidades.
+}
+\Begin{
+//Compute MSQ\;
+$\text{n} \longleftarrow sizeof(D)$\;
+$\text{MSQ} \longleftarrow zeros(n)$ //mean of squares of distances\;
+
+$\text{XXT} \longleftarrow zeros(n,n)$\;
+$\text{nssq} \longleftarrow 0$\;
+
+
+\For{i=1..n}
+{
+$\text{nssqj} \longleftarrow 0$\;
+    \For{j=1..n}
+    {
+    $\text{ssqj} += \text{D}[i,j]*\text{D}[i,j]$
+    }
+        $\text{XXT}[i] = \text{ssqj}/n $\;
+        $\text{nssq} += \text{ssqj}$\;
+
+
+$\text{MSQ} = \text{ssqj}$\;
+$\text{msq}+= \text{ssqj}$\;
+
+}
+
+$\text{msq}= \text{nssq}/(2n^{2})$\;
+
+
+
+//Compute diagonals\;
+
+\For{i=1..n}
+{
+    \For{j=1..n}
+    {
+    
+    $\text{XXT}[i,j] = -0.5*(\text{D}[i,j]*\text{D}[i,j]- \text{MSQ}[i] - \text{MSQ}[j] + 2*\text{msq})$\;
+    $\text{XXT}[j,i]= \text{XXT}[i,j]$\;
+    
+    }
+}
+
+$\text{U, S, V} \longleftarrow svd(\text{XXT})$\;
+
+//Compute X\;
+
+\For{i=1..n}
+{
+    \For{j=1..n}
+    {
+    $\text{X}[i,j] = \text{U}[i,j]*\text{S}[j,j]$
+    }
+}
+
+$\text{\textbf{return}}  \text{ X}$
+
+}
+\end{algorithm}
+
+\end{document} 
