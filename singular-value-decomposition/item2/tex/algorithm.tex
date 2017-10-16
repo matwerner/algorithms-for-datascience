@@ -13,35 +13,31 @@
 \DontPrintSemicolon
 \KwData
 {
-Matriz D de dist\^{a}ncias entre as cidades.
+Matriz D n-por-n de dist\^{a}ncias entre as cidades. \\ \par
+d n\'{u}mero de dimens\~{o}es do vetor posi\c{c}\~{o}es
 }
 \KwResult
 {
-A matriz X cujas linhas s\~{a}o as coordenadas ($x_{i}$) das cidades.
+A matriz X n-por-d cujas linhas s\~{a}o as coordenadas ($x_{i}$ com $i=1...d$) das cidades.
 }
 \Begin{
 //Compute MSQ\;
 $\text{n} \longleftarrow sizeof(D)$\;
-$\text{MSQ} \longleftarrow zeros(n)$ //mean of squares of distances\;
+$\text{MSQ} \longleftarrow zeros(n)$ //mean of squares of distances for column or row\;
 
-$\text{XXT} \longleftarrow zeros(n,n)$\;
-$\text{nssq} \longleftarrow 0$\;
+$\text{XXT} \longleftarrow zeros(n,n)$ //position matrix times position transposed\;
+$\text{nssq} \longleftarrow 0$//n times sum of squares of distances\; 
 
 
 \For{i=1..n}
 {
-$\text{nssqj} \longleftarrow 0$\;
+$\text{ssqi} \longleftarrow 0$//sum of squares of distances for row i\; 
     \For{j=1..n}
     {
-    $\text{ssqj} += \text{D}[i,j]*\text{D}[i,j]$
+    $\text{ssqi} += \text{D}[i,j]*\text{D}[i,j]$
     }
-        $\text{XXT}[i] = \text{ssqj}/n $\;
-        $\text{nssq} += \text{ssqj}$\;
-
-
-$\text{MSQ} = \text{ssqj}$\;
-$\text{msq}+= \text{ssqj}$\;
-
+    $\text{MSQ}[i] = \text{ssqi}/n $\;
+    $\text{nssq} += \text{ssqi}$\;
 }
 
 $\text{msq}= \text{nssq}/(2n^{2})$\;
