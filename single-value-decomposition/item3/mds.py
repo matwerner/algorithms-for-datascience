@@ -17,18 +17,21 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import MDS
 # from sklearn.preprocessing import normalize
 
-def normalize(A): 
-	minX = np.min(A[:,0])
-	meanX =np.mean(A[:,0]) 
-	maxX = np.max(A[:,0])
-
-	minY = np.min(A[:,1])
-	meanY =np.mean(A[:,1]) 
-	maxY = np.max(A[:,1])
+def normalize(A, origin='img'): 
 
 	N = np.zeros(A.shape)
-	N[:,0] = (A[:,0] - meanX)/ (maxX-minX)
-	N[:,1] = (A[:,1] - meanY)/ (maxY-minY)
+	for i in range(A.shape[1]):
+
+		minX = np.min(A[:,i])
+		meanX =np.mean(A[:,i]) 
+		maxX = np.max(A[:,i])
+
+		if origin == 'img':
+			N[:,i] = (A[:,i] + abs(minX))/ (maxX+abs(minX)-minX)	
+		else: 
+			N[:,i] = (A[:,i] - meanX)/ (maxX-minX)
+
+		
 	return N
 
 
@@ -39,13 +42,31 @@ def rotate_counterclockwise(A, degrees=45):
 	
 	Y = np.zeros(A.shape, dtype=np.float32)	
 
-	for i in range(A.shape[0]):
+	for i in range(A.shape[0]):		
+		Y[i,:] = (R.dot(A[i,:]))
 
-		# import code; code.interact(local=dict(globals(), **locals()))
-		Y[i,:] = (R * A[i,:]).reshape(1,2)
 	return Y
 
-
+labels = ["Boston"
+	,"Buffalo"
+	,"Chicago"
+	,"Dallas"
+	,"Denver"
+	,"Houston"
+	,"Los Angeles"
+	,"Memphis"
+	,"Miami"
+	,"Minneapolis"
+	,"New York"
+	,"Omaha"
+	,"Philadelphia"
+	,"Phoenix"
+	,"Pittsburgh"
+	,"Saint Louis"
+	,"Salt Lake City"
+	,"San Francisco"
+	,"Seattle"
+  ,"Washington D.C."]
 
 
 
@@ -72,6 +93,7 @@ if __name__ == '__main__':
 	D = np.matrix(matrix)
 	# print(matrix)
 
+	n = len(D)
 	XXT = computeXXT(matrix)
 	# print(XXT)
 	X = computeX(XXT,2)
@@ -80,10 +102,54 @@ if __name__ == '__main__':
 	mds= MDS()
 	Y = mds.fit_transform(D)
 
-	Yn = normalize(Y)
-	print(Yn)
-	Yr = rotate_counterclockwise(Yn, 45)
-	print(Yr)
-	plt.scatter(Yn[:,0], Yn[:,1])
+	# Xn = normalize(X)
+	# Yn = normalize(Y)
+
+	# print(Yn)
+	Xr = rotate_counterclockwise(X, 180)
+
+	# import code; code.interact(local=dict(globals(), **locals()))
+	Xr = normalize(Xr, origin='img')
+	# Yr = rotate_counterclockwise(Yn,  45)
+	print(Xr)
+	img = plt.imread('../img/usa2.png')
+	print(img.shape)
+	height= img.shape[0]
+	width = img.shape[1]
+
+	# for images top-left is zero
+	# for algos origin is center
+	imgscale = 0.95*np.array([[width, height]]) # 0.95 compensates for the frame
+	imgfactor= np.tile(imgscale, (n,1))
+	imgscale = np.array([[0.5*width, 0.5*height]])
+	imgintercept= np.tile(imgscale, (n,1))
+	# print(Xr)
+	Xs = imgfactor * Xr + imgintercept#scaled X
+	# print(Xs)
+	# fig = plt.figure(figsize=(6,9))
+	
+	fig, ax = plt.subplots(2,1)
+	implot = ax[0].imshow(img, origin='upper')
+	ax[1].scatter(Xs[:,0], Xs[:,1], c='r', s=1)
+	for i, txt in enumerate(labels):
+		ax[1].annotate(txt, (Xs[i,0],Xs[i,1]), fontsize=8)
+
 	plt.show()
+	# ax[1].scatter(Yr[:,0], Yr[:,1], c='g')
+
+	# plt.set_title('SVD rotation cloud')	
+	# ax[1].set_title('MDS rotation cloud')
+	# plt.show()
+	
+	# f, ax = plt.subplots(2, 1, figsize=(6,8))
+	# ax[0].scatter(Xr[:,0], Xr[:,1])
+	# ax[1].scatter(Yr[:,0], Yr[:,1])
+	# for i, txt in enumerate(labels):
+	# 	ax[0].annotate(txt, (Xr[i,0],Xr[i,1]))
+	# 	ax[1].annotate(txt, (Yr[i,0],Yr[i,1]))
+
+	# ax[0].set_title('SVD rotation cloud')	
+	# ax[1].set_title('MDS rotation cloud')
+	# plt.show()
+	
 	

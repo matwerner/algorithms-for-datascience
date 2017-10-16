@@ -77,23 +77,25 @@ if __name__ == '__main__':
 	for point in X :
 		t = np.array([[point[0]],[point[1]]],float)
 
-		print "Point"
-		print point
-		print "Transpose"
-		print t
-		print "Rotated"
+		print("Point")
+		print(point)
+		print("Transpose")
+		print(t)
+		print("Rotated")
 		r = np.matmul(rot,t)
-		print r
+		print(r)
 		rotated.append([r[0][0],r[1][0]])
 	
 	rotated = np.matrix(rotated)
-	print  rotated
-	x = rotated[:,0]
-	y = rotated[:,1]
+	print(rotated)
+	
+	x = rotated[:,0] # py3.6
+	y = rotated[:,1] # py3.6
 
 	fig, ax = plt.subplots()
-	ax.scatter(x, y)	
-	labels = ["Boston"
+	ax.scatter([x], [y])	
+	labels = [
+	"Boston"
 	,"Buffalo"
 	,"Chicago"
 	,"Dallas"
@@ -112,10 +114,10 @@ if __name__ == '__main__':
 	,"Salt Lake City"
 	,"San Francisco"
 	,"Seattle"
-    ,"Washington D.C."]
+  ,"Washington D.C."]
 
 	for i, txt in enumerate(labels):
-    		ax.annotate(txt, (x[i],y[i]))
+		ax.annotate(txt, (x[i],y[i]))
 
 	plt.show()
 
