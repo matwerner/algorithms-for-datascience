@@ -119,7 +119,7 @@ if __name__ == '__main__':
 
 	# for images top-left is zero
 	# for algos origin is center
-	imgscale = 0.92*np.array([[width, -height]]) # 0.95 compensates for the frame
+	imgscale = 0.85*np.array([[width, -height]]) # 0.95 compensates for the frame
 	imgfactor= np.tile(imgscale, (n,1))
 	imgscale = np.array([[0.6*width, 0.6*height]])
 	imgintercept= np.tile(imgscale, (n,1))
