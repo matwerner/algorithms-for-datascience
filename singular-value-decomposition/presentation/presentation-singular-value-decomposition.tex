@@ -1,0 +1,66 @@
+\documentclass[pdf]{beamer}
+%Portuguese stuff
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{mathtools}
+\usepackage{amsmath,amssymb,latexsym}
+\usepackage{pifont}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[linesnumbered,lined,boxed,commentsnumbered]{algorithm2e}
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+\usepackage{program}
+\mode<presentation>{}
+%%preambule
+\title{Singular Value Decomposition}
+\subtitle{Algoritmos Para Data Science - Eduardo Laber}
+\author{Daniel Menezes, Guilherme Varela, Matheus Telles}
+\begin{document}
+%%title frame
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	\begin{frame}[t]
+		\frametitle{Question 2 part 1}
+		Provar
+		\begin{equation}\label{eq1}
+			\textbf{x}_i\textbf{x}^T_j = -\frac{1}{2}\bigg[ d^2_{ij} - \frac{1}{n}\sum\limits_i^n d^2_{ij} - \frac{1}{n}\sum\limits_j^n d^2_{ij} + \frac{1}{n^2}\sum\limits_i^n \sum\limits_j^n d^2_{ij}\bigg]
+		\end{equation} 
+		\begin{equation}\label{eq2}
+			d^2_{ij} = \bigg[  \sum^d_k \left(x_{ik} - x_{jk} \right)^2\bigg] \Leftrightarrow\textbf{x}_i \cdot\textbf{x}_i + \textbf{x}_j\cdot\textbf{x}_j - 2\textbf{x}_i\cdot\textbf{x}_j
+		\end{equation} 
+			\begin{align}\label{eq3}
+				\frac{1}{n}\sum\limits_i^n d^2_{ij} &= 
+				\frac{1}{n}\sum\limits_i^n \left(\textbf{x}_i \cdot\textbf{x}_i + \textbf{x}_j\cdot\textbf{x}_j - 2\textbf{x}_i\cdot\textbf{x}_j\right)\nonumber\\
+				&=\frac{1}{n}\Big(\sum\limits_i^n \textbf{x}_i \cdot\textbf{x}_i+ n\textbf{x}_j \cdot\textbf{x}_j
+				-2\textbf{x}_j\sum\limits_i^n\textbf{x}_i \Big)\nonumber\\
+				&=\textbf{x}_j \cdot\textbf{x}_j + \frac{1}{n}\Big(\sum\limits_i^n \textbf{x}_i \cdot\textbf{x}_i\Big)\nonumber\\
+				&=\textbf{x}_j \cdot\textbf{x}_j + MSQ
+		\end{align}
+	\end{frame}				
+	\begin{frame}[t]
+		\frametitle{Question 2  part 1}
+		\begin{equation}\label{eq4}
+			\frac{1}{n}\sum\limits_j^n d^2_{ij} = \textbf{x}_i \cdot\textbf{x}_i + MSQ
+		\end{equation} 
+		\begin{align}\label{eq5}
+		\frac{1}{n^2}\sum\limits_i^n\sum\limits_j^n d^2_{ij} &=  \frac{1}{n^2}\sum\limits_i^n \bigg(n\textbf{x}_i\cdot\textbf{x}_i +  SSQ\bigg)\nonumber\\
+		&= \frac{1}{n^2}\bigg( nSSQ+ nSSQ\bigg)\nonumber\\
+		&=2MSQ
+		\end{align}
+		Substituindo \ref{eq3}, \ref{eq4}, \ref{eq5} em \ref{eq2} completamos a prova
+	\end{frame}
+	\begin{frame}[t]
+		\frametitle{Question 2  part 2}
+		\begin{align}\label{eq6}
+			X &=  U \Sigma V^T\nonumber\\
+			XX^T &=  \big(U \Sigma V^T\big)\big( U \Sigma V^T\big)^T = \big(U \Sigma V^T\big)\big( V \Sigma^T U\big)\nonumber\\
+					 &=  \big(U \Sigma \Sigma^T U\big)\nonumber\\
+				X   &= U \Sigma
+		\end{align}
+		Pegando os dois primeiros vetores colunas de tamanho n de \ref{eq6} obtemos a melhor representação da matrix $D$ em duas dimensões.
+	\end{frame}
+\end{document}
