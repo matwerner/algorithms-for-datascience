@@ -1,0 +1,768 @@
+Hash function---0
+Max tail---63
+Maximum tail number---1
+Hash function---1
+Max tail---63
+Maximum tail number---1
+Hash function---2
+Max tail---63
+Maximum tail number---1
+Hash function---3
+Max tail---63
+Maximum tail number---1
+Hash function---4
+Max tail---63
+Maximum tail number---1
+Hash function---5
+Max tail---63
+Maximum tail number---1
+Hash function---6
+Max tail---63
+Maximum tail number---1
+Hash function---7
+Max tail---63
+Maximum tail number---1
+Hash function---8
+Max tail---63
+Maximum tail number---1
+Hash function---9
+Max tail---63
+Maximum tail number---1
+Hash function---10
+Max tail---63
+Maximum tail number---1
+Hash function---11
+Max tail---63
+Maximum tail number---1
+Hash function---12
+Max tail---63
+Maximum tail number---1
+Hash function---13
+Max tail---63
+Maximum tail number---1
+Hash function---14
+Max tail---63
+Maximum tail number---1
+Hash function---15
+Max tail---63
+Maximum tail number---1
+Hash function---16
+Max tail---63
+Maximum tail number---1
+Hash function---17
+Max tail---63
+Maximum tail number---1
+Hash function---18
+Max tail---63
+Maximum tail number---1
+Hash function---19
+Max tail---63
+Maximum tail number---1
+Hash function---20
+Max tail---63
+Maximum tail number---1
+Hash function---21
+Max tail---63
+Maximum tail number---1
+Hash function---22
+Max tail---63
+Maximum tail number---1
+Hash function---23
+Max tail---63
+Maximum tail number---1
+Hash function---24
+Max tail---63
+Maximum tail number---1
+Hash function---25
+Max tail---63
+Maximum tail number---1
+Hash function---26
+Max tail---63
+Maximum tail number---1
+Hash function---27
+Max tail---63
+Maximum tail number---1
+Hash function---28
+Max tail---63
+Maximum tail number---1
+Hash function---29
+Max tail---63
+Maximum tail number---1
+Hash function---30
+Max tail---63
+Maximum tail number---1
+Hash function---31
+Max tail---63
+Maximum tail number---1
+Hash function---32
+Max tail---63
+Maximum tail number---1
+Hash function---33
+Max tail---63
+Maximum tail number---1
+Hash function---34
+Max tail---63
+Maximum tail number---1
+Hash function---35
+Max tail---63
+Maximum tail number---1
+Hash function---36
+Max tail---63
+Maximum tail number---1
+Hash function---37
+Max tail---63
+Maximum tail number---1
+Hash function---38
+Max tail---63
+Maximum tail number---1
+Hash function---39
+Max tail---63
+Maximum tail number---1
+Hash function---40
+Max tail---63
+Maximum tail number---1
+Hash function---41
+Max tail---63
+Maximum tail number---1
+Hash function---42
+Max tail---63
+Maximum tail number---1
+Hash function---43
+Max tail---63
+Maximum tail number---1
+Hash function---44
+Max tail---63
+Maximum tail number---1
+Hash function---45
+Max tail---63
+Maximum tail number---1
+Hash function---46
+Max tail---63
+Maximum tail number---1
+Hash function---47
+Max tail---63
+Maximum tail number---1
+Hash function---48
+Max tail---63
+Maximum tail number---1
+Hash function---49
+Max tail---63
+Maximum tail number---1
+Hash function---50
+Max tail---63
+Maximum tail number---1
+Hash function---51
+Max tail---63
+Maximum tail number---1
+Hash function---52
+Max tail---63
+Maximum tail number---1
+Hash function---53
+Max tail---63
+Maximum tail number---1
+Hash function---54
+Max tail---63
+Maximum tail number---1
+Hash function---55
+Max tail---63
+Maximum tail number---1
+Hash function---56
+Max tail---63
+Maximum tail number---1
+Hash function---57
+Max tail---63
+Maximum tail number---1
+Hash function---58
+Max tail---63
+Maximum tail number---1
+Hash function---59
+Max tail---63
+Maximum tail number---1
+Hash function---60
+Max tail---63
+Maximum tail number---1
+Hash function---61
+Max tail---63
+Maximum tail number---1
+Hash function---62
+Max tail---63
+Maximum tail number---1
+Hash function---63
+Max tail---63
+Maximum tail number---1
+Hash function---64
+Max tail---63
+Maximum tail number---1
+Hash function---65
+Max tail---63
+Maximum tail number---1
+Hash function---66
+Max tail---63
+Maximum tail number---1
+Hash function---67
+Max tail---63
+Maximum tail number---1
+Hash function---68
+Max tail---63
+Maximum tail number---1
+Hash function---69
+Max tail---63
+Maximum tail number---1
+Hash function---70
+Max tail---63
+Maximum tail number---1
+Hash function---71
+Max tail---63
+Maximum tail number---1
+Hash function---72
+Max tail---63
+Maximum tail number---1
+Hash function---73
+Max tail---63
+Maximum tail number---1
+Hash function---74
+Max tail---63
+Maximum tail number---1
+Hash function---75
+Max tail---63
+Maximum tail number---1
+Hash function---76
+Max tail---63
+Maximum tail number---1
+Hash function---77
+Max tail---63
+Maximum tail number---1
+Hash function---78
+Max tail---63
+Maximum tail number---1
+Hash function---79
+Max tail---63
+Maximum tail number---1
+Hash function---80
+Max tail---63
+Maximum tail number---1
+Hash function---81
+Max tail---63
+Maximum tail number---1
+Hash function---82
+Max tail---63
+Maximum tail number---1
+Hash function---83
+Max tail---63
+Maximum tail number---1
+Hash function---84
+Max tail---63
+Maximum tail number---1
+Hash function---85
+Max tail---63
+Maximum tail number---1
+Hash function---86
+Max tail---63
+Maximum tail number---1
+Hash function---87
+Max tail---63
+Maximum tail number---1
+Hash function---88
+Max tail---63
+Maximum tail number---1
+Hash function---89
+Max tail---63
+Maximum tail number---1
+Hash function---90
+Max tail---63
+Maximum tail number---1
+Hash function---91
+Max tail---63
+Maximum tail number---1
+Hash function---92
+Max tail---63
+Maximum tail number---1
+Hash function---93
+Max tail---63
+Maximum tail number---1
+Hash function---94
+Max tail---63
+Maximum tail number---1
+Hash function---95
+Max tail---63
+Maximum tail number---1
+Hash function---96
+Max tail---63
+Maximum tail number---1
+Hash function---97
+Max tail---63
+Maximum tail number---1
+Hash function---98
+Max tail---63
+Maximum tail number---1
+Hash function---99
+Max tail---63
+Maximum tail number---1
+Hash function---100
+Max tail---63
+Maximum tail number---1
+Hash function---101
+Max tail---63
+Maximum tail number---1
+Hash function---102
+Max tail---63
+Maximum tail number---1
+Hash function---103
+Max tail---63
+Maximum tail number---1
+Hash function---104
+Max tail---63
+Maximum tail number---1
+Hash function---105
+Max tail---63
+Maximum tail number---1
+Hash function---106
+Max tail---63
+Maximum tail number---1
+Hash function---107
+Max tail---63
+Maximum tail number---1
+Hash function---108
+Max tail---63
+Maximum tail number---1
+Hash function---109
+Max tail---63
+Maximum tail number---1
+Hash function---110
+Max tail---63
+Maximum tail number---1
+Hash function---111
+Max tail---63
+Maximum tail number---1
+Hash function---112
+Max tail---63
+Maximum tail number---1
+Hash function---113
+Max tail---63
+Maximum tail number---1
+Hash function---114
+Max tail---63
+Maximum tail number---1
+Hash function---115
+Max tail---63
+Maximum tail number---1
+Hash function---116
+Max tail---63
+Maximum tail number---1
+Hash function---117
+Max tail---63
+Maximum tail number---1
+Hash function---118
+Max tail---63
+Maximum tail number---1
+Hash function---119
+Max tail---63
+Maximum tail number---1
+Hash function---120
+Max tail---63
+Maximum tail number---1
+Hash function---121
+Max tail---63
+Maximum tail number---1
+Hash function---122
+Max tail---63
+Maximum tail number---1
+Hash function---123
+Max tail---63
+Maximum tail number---1
+Hash function---124
+Max tail---63
+Maximum tail number---1
+Hash function---125
+Max tail---63
+Maximum tail number---1
+Hash function---126
+Max tail---63
+Maximum tail number---1
+Hash function---127
+Max tail---63
+Maximum tail number---1
+Hash function---128
+Max tail---63
+Maximum tail number---1
+Hash function---129
+Max tail---63
+Maximum tail number---1
+Hash function---130
+Max tail---63
+Maximum tail number---1
+Hash function---131
+Max tail---63
+Maximum tail number---1
+Hash function---132
+Max tail---63
+Maximum tail number---1
+Hash function---133
+Max tail---63
+Maximum tail number---1
+Hash function---134
+Max tail---63
+Maximum tail number---1
+Hash function---135
+Max tail---63
+Maximum tail number---1
+Hash function---136
+Max tail---63
+Maximum tail number---1
+Hash function---137
+Max tail---63
+Maximum tail number---1
+Hash function---138
+Max tail---63
+Maximum tail number---1
+Hash function---139
+Max tail---63
+Maximum tail number---1
+Hash function---140
+Max tail---63
+Maximum tail number---1
+Hash function---141
+Max tail---63
+Maximum tail number---1
+Hash function---142
+Max tail---63
+Maximum tail number---1
+Hash function---143
+Max tail---63
+Maximum tail number---1
+Hash function---144
+Max tail---63
+Maximum tail number---1
+Hash function---145
+Max tail---63
+Maximum tail number---1
+Hash function---146
+Max tail---63
+Maximum tail number---1
+Hash function---147
+Max tail---63
+Maximum tail number---1
+Hash function---148
+Max tail---63
+Maximum tail number---1
+Hash function---149
+Max tail---63
+Maximum tail number---1
+Hash function---150
+Max tail---63
+Maximum tail number---1
+Hash function---151
+Max tail---63
+Maximum tail number---1
+Hash function---152
+Max tail---63
+Maximum tail number---1
+Hash function---153
+Max tail---63
+Maximum tail number---1
+Hash function---154
+Max tail---63
+Maximum tail number---1
+Hash function---155
+Max tail---63
+Maximum tail number---1
+Hash function---156
+Max tail---63
+Maximum tail number---1
+Hash function---157
+Max tail---63
+Maximum tail number---1
+Hash function---158
+Max tail---63
+Maximum tail number---1
+Hash function---159
+Max tail---63
+Maximum tail number---1
+Hash function---160
+Max tail---63
+Maximum tail number---1
+Hash function---161
+Max tail---63
+Maximum tail number---1
+Hash function---162
+Max tail---63
+Maximum tail number---1
+Hash function---163
+Max tail---63
+Maximum tail number---1
+Hash function---164
+Max tail---63
+Maximum tail number---1
+Hash function---165
+Max tail---63
+Maximum tail number---1
+Hash function---166
+Max tail---63
+Maximum tail number---1
+Hash function---167
+Max tail---63
+Maximum tail number---1
+Hash function---168
+Max tail---63
+Maximum tail number---1
+Hash function---169
+Max tail---63
+Maximum tail number---1
+Hash function---170
+Max tail---63
+Maximum tail number---1
+Hash function---171
+Max tail---63
+Maximum tail number---1
+Hash function---172
+Max tail---63
+Maximum tail number---1
+Hash function---173
+Max tail---63
+Maximum tail number---1
+Hash function---174
+Max tail---63
+Maximum tail number---1
+Hash function---175
+Max tail---63
+Maximum tail number---1
+Hash function---176
+Max tail---63
+Maximum tail number---1
+Hash function---177
+Max tail---63
+Maximum tail number---1
+Hash function---178
+Max tail---63
+Maximum tail number---1
+Hash function---179
+Max tail---63
+Maximum tail number---1
+Hash function---180
+Max tail---63
+Maximum tail number---1
+Hash function---181
+Max tail---63
+Maximum tail number---1
+Hash function---182
+Max tail---63
+Maximum tail number---1
+Hash function---183
+Max tail---63
+Maximum tail number---1
+Hash function---184
+Max tail---63
+Maximum tail number---1
+Hash function---185
+Max tail---63
+Maximum tail number---1
+Hash function---186
+Max tail---63
+Maximum tail number---1
+Hash function---187
+Max tail---63
+Maximum tail number---1
+Hash function---188
+Max tail---63
+Maximum tail number---1
+Hash function---189
+Max tail---63
+Maximum tail number---1
+Hash function---190
+Max tail---63
+Maximum tail number---1
+Hash function---191
+Max tail---63
+Maximum tail number---1
+Hash function---192
+Max tail---63
+Maximum tail number---1
+Hash function---193
+Max tail---63
+Maximum tail number---1
+Hash function---194
+Max tail---63
+Maximum tail number---1
+Hash function---195
+Max tail---63
+Maximum tail number---1
+Hash function---196
+Max tail---63
+Maximum tail number---1
+Hash function---197
+Max tail---63
+Maximum tail number---1
+Hash function---198
+Max tail---63
+Maximum tail number---1
+Hash function---199
+Max tail---63
+Maximum tail number---1
+Hash function---200
+Max tail---63
+Maximum tail number---1
+Hash function---201
+Max tail---63
+Maximum tail number---1
+Hash function---202
+Max tail---63
+Maximum tail number---1
+Hash function---203
+Max tail---63
+Maximum tail number---1
+Hash function---204
+Max tail---63
+Maximum tail number---1
+Hash function---205
+Max tail---63
+Maximum tail number---1
+Hash function---206
+Max tail---63
+Maximum tail number---1
+Hash function---207
+Max tail---63
+Maximum tail number---1
+Hash function---208
+Max tail---63
+Maximum tail number---1
+Hash function---209
+Max tail---63
+Maximum tail number---1
+Hash function---210
+Max tail---63
+Maximum tail number---1
+Hash function---211
+Max tail---63
+Maximum tail number---1
+Hash function---212
+Max tail---63
+Maximum tail number---1
+Hash function---213
+Max tail---63
+Maximum tail number---1
+Hash function---214
+Max tail---63
+Maximum tail number---1
+Hash function---215
+Max tail---63
+Maximum tail number---1
+Hash function---216
+Max tail---63
+Maximum tail number---1
+Hash function---217
+Max tail---63
+Maximum tail number---1
+Hash function---218
+Max tail---63
+Maximum tail number---1
+Hash function---219
+Max tail---63
+Maximum tail number---1
+Hash function---220
+Max tail---63
+Maximum tail number---1
+Hash function---221
+Max tail---63
+Maximum tail number---1
+Hash function---222
+Max tail---63
+Maximum tail number---1
+Hash function---223
+Max tail---63
+Maximum tail number---1
+Hash function---224
+Max tail---63
+Maximum tail number---1
+Hash function---225
+Max tail---63
+Maximum tail number---1
+Hash function---226
+Max tail---63
+Maximum tail number---1
+Hash function---227
+Max tail---63
+Maximum tail number---1
+Hash function---228
+Max tail---63
+Maximum tail number---1
+Hash function---229
+Max tail---63
+Maximum tail number---1
+Hash function---230
+Max tail---63
+Maximum tail number---1
+Hash function---231
+Max tail---63
+Maximum tail number---1
+Hash function---232
+Max tail---63
+Maximum tail number---1
+Hash function---233
+Max tail---63
+Maximum tail number---1
+Hash function---234
+Max tail---63
+Maximum tail number---1
+Hash function---235
+Max tail---63
+Maximum tail number---1
+Hash function---236
+Max tail---63
+Maximum tail number---1
+Hash function---237
+Max tail---63
+Maximum tail number---1
+Hash function---238
+Max tail---63
+Maximum tail number---1
+Hash function---239
+Max tail---63
+Maximum tail number---1
+Hash function---240
+Max tail---63
+Maximum tail number---1
+Hash function---241
+Max tail---63
+Maximum tail number---1
+Hash function---242
+Max tail---63
+Maximum tail number---1
+Hash function---243
+Max tail---63
+Maximum tail number---1
+Hash function---244
+Max tail---63
+Maximum tail number---1
+Hash function---245
+Max tail---63
+Maximum tail number---1
+Hash function---246
+Max tail---63
+Maximum tail number---1
+Hash function---247
+Max tail---63
+Maximum tail number---1
+Hash function---248
+Max tail---63
+Maximum tail number---1
+Hash function---249
+Max tail---63
+Maximum tail number---1
+Hash function---250
+Max tail---63
+Maximum tail number---1
+Hash function---251
+Max tail---63
+Maximum tail number---1
+Hash function---252
+Max tail---63
+Maximum tail number---1
+Hash function---253
+Max tail---63
+Maximum tail number---1
+Hash function---254
+Max tail---63
+Maximum tail number---1
+Hash function---255
+Max tail---63
+Maximum tail number---1
