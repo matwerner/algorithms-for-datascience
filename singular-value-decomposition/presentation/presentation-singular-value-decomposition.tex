@@ -1,4 +1,4 @@
-\documentclass[pdf]{beamer}
+\documentclass[aspectratio=169]{beamer}
 %Portuguese stuff
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -24,7 +24,8 @@
 		\titlepage
 	\end{frame}
 	\begin{frame}[t]
-		\frametitle{Question 2 part 1}
+		%\frametitle{Question 2 part 1}
+		\begin{scriptsize}
 		Provar
 		\begin{equation}\label{eq1}
 			\textbf{x}_i\textbf{x}^T_j = -\frac{1}{2}\bigg[ d^2_{ij} - \frac{1}{n}\sum\limits_i^n d^2_{ij} - \frac{1}{n}\sum\limits_j^n d^2_{ij} + \frac{1}{n^2}\sum\limits_i^n \sum\limits_j^n d^2_{ij}\bigg]
@@ -40,9 +41,10 @@
 				&=\textbf{x}_j \cdot\textbf{x}_j + \frac{1}{n}\Big(\sum\limits_i^n \textbf{x}_i \cdot\textbf{x}_i\Big)\nonumber\\
 				&=\textbf{x}_j \cdot\textbf{x}_j + MSQ
 		\end{align}
+		\end{scriptsize}
 	\end{frame}				
 	\begin{frame}[t]
-		\frametitle{Question 2  part 1}
+		%\frametitle{Question 2  part 1}
 		\begin{equation}\label{eq4}
 			\frac{1}{n}\sum\limits_j^n d^2_{ij} = \textbf{x}_i \cdot\textbf{x}_i + MSQ
 		\end{equation} 
@@ -54,7 +56,7 @@
 		Substituindo \ref{eq3}, \ref{eq4}, \ref{eq5} em \ref{eq2} completamos a prova
 	\end{frame}
 	\begin{frame}[t]
-		\frametitle{Question 2  part 2}
+		%\frametitle{Question 2  part 2}
 		\begin{align}\label{eq6}
 			X &=  U \Sigma V^T\nonumber\\
 			XX^T &=  \big(U \Sigma V^T\big)\big( U \Sigma V^T\big)^T = \big(U \Sigma V^T\big)\big( V \Sigma^T U\big)\nonumber\\
@@ -62,5 +64,36 @@
 				X   &= U \Sigma
 		\end{align}
 		Pegando os dois primeiros vetores colunas de tamanho n de \ref{eq6} obtemos a melhor representação da matrix $D$ em duas dimensões.
+	\end{frame}
+	\begin{frame}
+		\begin{algorithm}[H]
+			\DontPrintSemicolon
+			\KwData
+			{
+				Matriz XXT n-por-n das normas ao quadrado das posições. \\ \par
+				d n\'{u}mero de dimens\~{o}es do vetor posi\c{c}\~{o}es
+			}
+			\KwResult
+			{
+				A matriz X n-por-d cujas linhas s\~{a}o as coordenadas ($x_{i}$ com $i=1...d$) das cidades.
+			}
+			\Begin{
+				$\text{U, S, V} \longleftarrow svd(\text{XXT})$\;
+				
+				//Compute X\;
+				
+				\For{i=1..n}
+				{
+					\For{j=1..d}
+					{
+						$\text{X}[i,j] = \text{U}[i,j]*\text{S}[j,j]$
+					}
+				}
+				
+				$\text{\textbf{return}}  \text{ X}$
+				
+			}
+		\end{algorithm}
+			
 	\end{frame}
 \end{document}
