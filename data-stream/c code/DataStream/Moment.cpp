@@ -7,7 +7,7 @@ DataStream::Moment::Moment(int nthMoment) {
 }
 
 std::vector<uint64_t> DataStream::Moment::get_parcial_results(void) {
-    uint64_t moment = 1;
+    uint64_t moment = 0;
     std::vector<uint64_t> results;    
     for (std::unordered_map<uint64_t, uint64_t>::iterator it = elements.begin(); it != elements.end(); it++) {
         moment += std::pow(it->second, this->nthMoment);
