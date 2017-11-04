@@ -3,6 +3,7 @@
 
 #include "DataStream/ProcessorBase.hpp"
 #include "DataStream/Moment.hpp"
+#include "DataStream/FlajoletMartin.hpp"
 #include "DataStream/AMS.hpp"
 #include "Utils.hpp"
 
@@ -45,7 +46,7 @@ void experiment(DataStream::ProcessorBase* processor, uint64_t batchSize, uint64
 }
 
 int main(int argc, char** argv){
-    uint64_t dataStreamSize = -1, batchSize = -1, nth = -1, variableSize = -1;
+    uint64_t dataStreamSize = 0, batchSize = 0, nth = 0, variableSize = 0, hashSize = 0;
     char *command, *outputPath;
 
     // Read and parse arguments
@@ -63,6 +64,9 @@ int main(int argc, char** argv){
         else if(strcmp(argv[i], "--variable") == 0) {
 			variableSize = (uint64_t) atoi(argv[i+1]);
         }
+        else if(strcmp(argv[i], "--hash") == 0) {
+			hashSize = (uint64_t) atoi(argv[i+1]);
+        }
         else if(strcmp(argv[i], "--output") == 0) {
 			outputPath = argv[i+1];
         }        
@@ -77,6 +81,9 @@ int main(int argc, char** argv){
     DataStream::ProcessorBase* processor = NULL;
     if(strcmp(command, "Moment") == 0) {
         processor = (DataStream::ProcessorBase*) new DataStream::Moment(nth);
+    }
+    else if(strcmp(command, "FlajoletMartin") == 0) {
+        processor = (DataStream::ProcessorBase*) new DataStream::FlajoletMartin(hashSize, batchSize * dataStreamSize);
     }
     else if(strcmp(command, "AMS") == 0) {
         processor = (DataStream::ProcessorBase*) new DataStream::AMS(variableSize, batchSize * dataStreamSize);
