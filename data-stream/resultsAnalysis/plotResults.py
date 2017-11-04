@@ -7,10 +7,10 @@ import math
 VERBOSE=True
 
 def meanEstimate(elements):
-    return np.mean(elements)
+    return np.mean(elements).item()
 
 def medianEstimate(elements):
-    return np.median(elements)
+    return np.median(elements).item()
 
 def chunks(elements,groupSize):
     nGroups = len(elements)/groupSize
@@ -21,9 +21,17 @@ def chunks(elements,groupSize):
 def minimumSizeOfGroup(nUniques):
     return math.log(nUniques,2)
 
-def combineEstimates(elements,nUniques):
+def combineEstimates_meanOfMedians(elements,nUniques):
     groupSize = minimumSizeOfGroup(nUniques)
     groups = chunks(elements,groupSize)
+
+    groupsMedians =  map(medianEstimate, groups)
+    return meanEstimate(groupsMedians)
+
+def combineEstimates_mediansOfMeans(elements,nUniques):
+    groupSize = minimumSizeOfGroup(nUniques)
+    groups = chunks(elements,groupSize)
+
     groupsMeans =  map(meanEstimate, groups)
     return medianEstimate(groupsMeans)
 
@@ -41,13 +49,19 @@ def getFileValues(fileName):
 
     return values
 
-def graficoVariacaoDeFuncoesHash(nValoresUnicos,tails):
-    print "a"
-
-if __name__ == '__main__':
-    fileName = "FlajoletMartin.txt" 
+def analyse(fileName):
     values = getFileValues(fileName)
-    nUniques = 4
+
+    plotByGroups(fileName,combineEstimates_mediansOfMeans,"Mediana das medias dos grupos")
+    plotByGroups(fileName,combineEstimates_meanOfMedians,"Media das medianas dos grupos")
+
+    print "Média dos valores: %s"%(meanEstimate(values))
+    print "Mediana dos valores: %s"%(medianEstimate(values))
+
+
+def plotByGroups(fileName,estimateFunction,graphName):
+    values = getFileValues(fileName)
+    nUniques = 575906
     minGroupSize = minimumSizeOfGroup(nUniques)
 
     # O número de experimentos realizados, todos considerando um numero de funções de batch que é potência de 2
@@ -73,19 +87,23 @@ if __name__ == '__main__':
                 print "Pulando o experimento 2^%s = %s já que o tamanho mínimo do grupo é %s"%(i,2**i,minGroupSize)
             continue
         
-        estimate = combineEstimates(values[:2**i],nUniques)
+        estimate = estimateFunction(values[:2**i],nUniques)
 
         experimentsResults.append([i,estimate])
     
     estimates = [el[0] for el in experimentsResults]
     potences = [el[1] for el in experimentsResults]
 
-    plt.plot(potences,estimates)
-    plt.xlabel('potences')
+    plt.plot(estimates,potences)
+    plt.title(graphName)
     plt.ylabel('estimates')
+    plt.xlabel('potences')
     plt.axhline(y=nUniques, color='r', linestyle='-')
 
     plt.show()
+
+if __name__ == '__main__':
+    analyse("FlajoletMartin.txt")
 
 
 # def teste():
