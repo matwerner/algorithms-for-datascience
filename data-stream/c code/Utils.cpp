@@ -5,11 +5,11 @@
 
 using namespace std;
 
-uint64_t* random_data_stream(uint64_t size) {
-    // Get a random number generator
-    std::random_device rd;
-    mt19937_64 e2(rd());
-    e2.seed(100);
+// Get a random number generator
+mt19937_64 e2(100);
+
+uint64_t* Utils::random_data_stream(uint64_t size) {
+    // Instantiate distribution method
     std:uniform_real_distribution<double> dist(0, 1);
 
     // Instantiate data stream
@@ -19,7 +19,7 @@ uint64_t* random_data_stream(uint64_t size) {
         double randomValue = dist(e2);
 
         // Convert number to new distribution
-        dataStream[i] = (uint64_t) std::min(1.0/(randomValue * randomValue), DATA_STREAM_MAX_VALUE);
+        dataStream[i] = (uint64_t) std::min(1.0/(randomValue * randomValue), Utils::DATA_STREAM_MAX_VALUE);
     }
 
     return dataStream;

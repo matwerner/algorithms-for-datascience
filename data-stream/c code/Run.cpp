@@ -18,7 +18,7 @@ void experiment(DataStream::ProcessorBase* processor, uint64_t batchSize, uint64
 
         // Generate batch stream
         begin = clock();
-        uint64_t* randomStream = random_data_stream(dataStreamSize);
+        uint64_t* randomStream = Utils::random_data_stream(dataStreamSize);
         end = clock();
 
         elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
