@@ -1,13 +1,21 @@
+#include <cmath>
+
 #include "Moment.hpp"
 
-uint64_t DataStream::Moment::result(void) {
-    uint64_t zeroth_moment = 0;
+DataStream::Moment::Moment(int nthMoment) {
+    this->nthMoment = nthMoment;
+}
+
+std::vector<uint64_t> DataStream::Moment::get_parcial_results(void) {
+    uint64_t moment = 1;
+    std::vector<uint64_t> results;    
     for (std::unordered_map<uint64_t, uint64_t>::iterator it = elements.begin(); it != elements.end(); it++) {
-        zeroth_moment += 1;
-        ///second_moment += (it->second * it->second);
+        moment += std::pow(it->second, this->nthMoment);
     }
 
-    return zeroth_moment;
+    results.push_back(moment);
+
+    return results;
 }
     
 void DataStream::Moment::process_data_stream_internal(uint64_t* dataStream, uint64_t size) {

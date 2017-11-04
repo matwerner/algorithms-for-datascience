@@ -3,8 +3,11 @@ CFLAGS  = -g -O3 -std=c++11 -Wall
 
 all: Run
 
-Run: Utils.o Moment.o ProcessorBase.o Run.o
-	$(CC) $(CFLAGS) Utils.o Moment.o ProcessorBase.o Run.o -o Run
+Run: Utils.o AMS.o Moment.o ProcessorBase.o Run.o
+	$(CC) $(CFLAGS) Utils.o AMS.o Moment.o ProcessorBase.o Run.o -o Run
+
+AMS.o: DataStream/AMS.cpp
+	$(CC) $(CFLAGS) -c DataStream/AMS.cpp
 
 Moment.o: DataStream/Moment.cpp
 	$(CC) $(CFLAGS) -c DataStream/Moment.cpp
