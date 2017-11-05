@@ -39,7 +39,7 @@ uint64_t DataStream::ProcessorBase::combine_parcial_results(std::vector<uint64_t
     }
 
     // Compute number of groups needed
-    int factor = 2 * 3, i = 0;
+    int factor = 2 * 3, i = 1;
     int groupSize = factor * (int) std::log2(results.size());
     int resultsPerGroupSize = (int) results.size() / groupSize;
 

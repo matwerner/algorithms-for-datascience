@@ -1,5 +1,5 @@
-#include <iostream>
 #include <cstring>
+#include <iostream>
 
 #include "DataStream/ProcessorBase.hpp"
 #include "DataStream/Moment.hpp"
@@ -37,12 +37,12 @@ void experiment(DataStream::ProcessorBase* processor, uint64_t batchSize, uint64
         delete randomStream;
     }
 
+    // Dump processor result
+    processor->dump(outputPath);
+
     // Output processor result
     uint64_t result = processor->get_result();
     cout << "Process result: " << result << endl;
-
-    // Dump processor result
-    processor->dump(outputPath);
 }
 
 int main(int argc, char** argv){
