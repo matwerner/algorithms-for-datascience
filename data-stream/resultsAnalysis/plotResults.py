@@ -91,10 +91,10 @@ def plotByGroups(fileName,estimateFunction,graphName):
 
         experimentsResults.append([i,estimate])
     
-    estimates = [el[0] for el in experimentsResults]
-    potences = [el[1] for el in experimentsResults]
+    estimates = [el[1] for el in experimentsResults]
+    potences = [el[0] for el in experimentsResults]
 
-    plt.plot(estimates,potences)
+    plt.plot(potences,estimates)
     plt.title(graphName)
     plt.ylabel('estimates')
     plt.xlabel('potences')
@@ -102,9 +102,33 @@ def plotByGroups(fileName,estimateFunction,graphName):
 
     plt.show()
 
-if __name__ == '__main__':
-    analyse("FlajoletMartin.txt")
 
+
+def analyzeAMS(fileName,graphName):
+    values = getFileValues(fileName)
+    nExperiments = math.log(len(values),2)
+    experimentsResults = []
+
+
+    for i in range(int(nExperiments)+1):
+        mean = np.mean(values[:2**i])
+        experimentsResults.append([i,mean])
+
+    potences = [el[0] for el in experimentsResults]
+    means = [el[1] for el in experimentsResults]
+
+    plt.plot(potences,means)
+    plt.title(graphName)
+    plt.ylabel('estimates')
+    plt.xlabel('potences')
+    #plt.axhline(y=nUniques, color='r', linestyle='-')
+    plt.show()
+
+
+
+if __name__ == '__main__':
+    analyse("file.txt")
+    analyzeAMS("file.txt","Mean by attributes")
 
 # def teste():
 #     import numpy as np
