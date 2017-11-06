@@ -68,7 +68,7 @@ int main(int argc, char** argv){
         else if(strcmp(argv[i], "--hash") == 0) {
 			hashSize = (uint64_t) atoi(argv[i+1]);
         }
-        else if(strcmp(argv[i], "--finite") == 0) {
+        else if(strcmp(argv[i], "--isfinite") == 0) {
 			finite = strcmp(argv[i+1], "true") == 0? true : false;
         }
         else if(strcmp(argv[i], "--output") == 0) {
