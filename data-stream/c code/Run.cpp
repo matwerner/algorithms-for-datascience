@@ -47,6 +47,7 @@ void experiment(DataStream::ProcessorBase* processor, uint64_t batchSize, uint64
 
 int main(int argc, char** argv){
     uint64_t dataStreamSize = 0, batchSize = 0, nth = 0, variableSize = 0, hashSize = 0;
+    bool finite = true;
     char *command, *outputPath;
 
     // Read and parse arguments
@@ -67,6 +68,9 @@ int main(int argc, char** argv){
         else if(strcmp(argv[i], "--hash") == 0) {
 			hashSize = (uint64_t) atoi(argv[i+1]);
         }
+        else if(strcmp(argv[i], "--finite") == 0) {
+			finite = strcmp(argv[i+1], "true") == 0? true : false;
+        }
         else if(strcmp(argv[i], "--output") == 0) {
 			outputPath = argv[i+1];
         }        
@@ -86,7 +90,7 @@ int main(int argc, char** argv){
         processor = (DataStream::ProcessorBase*) new DataStream::FlajoletMartin(hashSize, batchSize * dataStreamSize);
     }
     else if(strcmp(command, "AMS") == 0) {
-        processor = (DataStream::ProcessorBase*) new DataStream::AMS(variableSize, batchSize * dataStreamSize);
+        processor = (DataStream::ProcessorBase*) new DataStream::AMS(variableSize, batchSize * dataStreamSize, finite);
     }
     else{
         cout << "Command " << command <<  " not supported." << endl;

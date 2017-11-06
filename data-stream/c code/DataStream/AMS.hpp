@@ -13,7 +13,13 @@ namespace DataStream {
 
         private:
 
-            void update_variables(uint64_t* dataStream, uint64_t size);
+            void remove_variable(uint64_t index);
+
+            void insert_variable(uint64_t element, uint64_t startTime);
+
+            void reservoir_sampling(uint64_t element, uint64_t currentTime);
+
+            void finite_length(uint64_t element, uint64_t currentTime);
 
             class Variable {
 
@@ -44,8 +50,9 @@ namespace DataStream {
             std::vector<uint64_t> startTimes;
             uint64_t streamSize;
             uint64_t variableSize;
+            bool finiteLength;
 
-            AMS(uint64_t variableSize, uint64_t streamSize);
+            AMS(uint64_t variableSize, uint64_t streamSize, bool finiteLength);
     };
 }
 
