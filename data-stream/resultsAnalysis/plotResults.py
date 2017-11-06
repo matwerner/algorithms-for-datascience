@@ -127,7 +127,7 @@ def analyzeAMS(fileName,graphName):
 
 
 if __name__ == '__main__':
-    analyse("file.txt")
+    analyse("FlajoletMartin.txt")
     analyzeAMS("file.txt","Mean by attributes")
 
 # def teste():
