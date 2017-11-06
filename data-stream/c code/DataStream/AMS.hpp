@@ -29,6 +29,8 @@ namespace DataStream {
 
                     bool try_increment(uint64_t currentTime);
 
+                    bool multiplication_is_safe(uint64_t a, uint64_t b);
+
                     uint64_t compute_second_moment(uint64_t size);
 
                 private:

@@ -24,7 +24,7 @@ DataStream::FlajoletMartin::FlajoletMartin(uint64_t hashSize, uint64_t streamSiz
 
 uint64_t DataStream::FlajoletMartin::get_zero_tail_size(uint64_t value) {
     uint64_t tailSize = 0;
-    while((value & 1) == 0 && tailSize < 63) {        
+    while((value & 1) == 0 && tailSize < 64) {        
         tailSize++;
         value = value >> 1;
     }

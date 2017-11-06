@@ -78,7 +78,7 @@ void DataStream::AMS::insert_variable(uint64_t element, uint64_t startTime) {
 }
 
 void DataStream::AMS::reservoir_sampling(uint64_t element, uint64_t currentTime) {
-    // 
+    // Sampling still not needed
     if(currentTime < this->variableSize) {
         this->insert_variable(element, currentTime);
         return;
@@ -95,7 +95,7 @@ void DataStream::AMS::reservoir_sampling(uint64_t element, uint64_t currentTime)
         return;
     }
     
-    // Now we have to choose one one element to throw out
+    // Now we have to choose one element to throw out
     int index = (int) std::floor(this->variableSize * ((double) rand() / (RAND_MAX)));
     
     // Remove choosen element
@@ -169,8 +169,16 @@ bool DataStream::AMS::Variable::try_increment(uint64_t currentTime) {
     return false;
 }
 
+bool  DataStream::AMS::Variable::multiplication_is_safe(uint64_t a, uint64_t b) {
+    size_t a_bits=std::log2(a), b_bits=std::log2(b);
+    return (a_bits+b_bits<=64);
+}
+
 uint64_t DataStream::AMS::Variable::compute_second_moment(uint64_t size) {
-    return size * (2ULL * this->value - 1ULL);
+    // Check for overflow
+    bool safe = this->multiplication_is_safe(size, this->value);    
+
+    return safe ? size * (2ULL * this->value - 1ULL) : std::pow(2, 64);;
 }
 
 
