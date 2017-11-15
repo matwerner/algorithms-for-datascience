@@ -3,11 +3,14 @@
 	
 	Utility functions for text edition
 '''
-# from nltk import download
+import numpy as np 
 import string 
 import sys 
+
 from nltk.corpus import stopwords as _stopwords
 from nltk.stem import * 
+
+
 
 def tokenizer(sentences, stopwords=None, stemmer=None): 
 	# print('%s\r' %(tokens))
@@ -30,6 +33,35 @@ def tokenizer(sentences, stopwords=None, stemmer=None):
 	return ' '.join(tokens)
 
 
+def matrix2txt(mtrx, filename='mtrx.txt'):
+	'''		
+		mtrx is a numpy matrix
+		writes the bow matrix to text, or distance matrix to text
+	'''	
+	path= '../../locality-sensitive-hashing/datasets/' + filename	
+	n_headers=bow.shape[1]-2
+	headers = list(bow.shape) + ['']*n_headers
+	df = pd.DataFrame(data=bow.astype(np.int32), columns=headers, index=None)
+	df.to_csv(path, sep=' ',index=False, index_label=False)
+
+
+def data2bow(data, word2idx):
+	'''	
+		Converts idx_description to bow a VxD
+		D: documents (idx_description)		
+		V: Vocabulary
+		
+	'''	
+	nrows= data.shape[0]
+	ncols=len(word2idx)
+	bow= np.zeros((nrows, ncols),dtype=np.int32)
+	for r in range(nrows):		
+		indexes=list(map(int,data.loc[r,'idx_description'].split(' '))	)		
+		for c in indexes:
+			bow[r, c]+=1
+
+	return bow.T  
+
 def data2idx(data, word2idx):
 	'''	
 		Converts a token_description column to idx_description
@@ -38,7 +70,6 @@ def data2idx(data, word2idx):
 	token_count=0
 	for i in range(nrows):
 		# import code; code.interact(local=dict(globals(), **locals()))
-
 		tokens=data.loc[i,'token_description'].split(' ')	
 		indexes= token2idx(tokens , word2idx)
 		token_count+=len(indexes)
