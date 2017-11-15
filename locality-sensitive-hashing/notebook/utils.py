@@ -32,24 +32,53 @@ def tokenizer(sentences, stopwords=None, stemmer=None):
 	
 	return ' '.join(tokens)
 
+def bow2dist(bow, verbose=True):
+	'''		
+	INPUT
+		bow: bag-of-words VxD numpy matrix 		
+
+	OUTPUT	
+		dist: distance DxD lower triangular matrix
+
+	'''	
+	d = bow.shape[1]
+	dist=np.zeros((d,d), dtype=np.float32)
+	for i in range(d):
+		for j in range(0,i):
+			dif = bow[:,i]-bow[:,j]
+			dist[i,j]=np.sqrt(np.dot(dif,dif))
+			if verbose:
+				sys.stdout.write('%05d,%05d:\t%0.2f\r' % (i,j,dist[i,j]))
+				sys.stdout.flush()
+	print('')				
+	return dist
+
 
 def matrix2txt(mtrx, filename='mtrx.txt'):
 	'''		
-		mtrx is a numpy matrix
-		writes the bow matrix to text, or distance matrix to text
+	INPUT
+		mtrx: a generic numpy matrix ex: bow or dist
+	OUTPUT
+		-
 	'''	
 	path= '../../locality-sensitive-hashing/datasets/' + filename	
-	n_headers=bow.shape[1]-2
-	headers = list(bow.shape) + ['']*n_headers
-	df = pd.DataFrame(data=bow.astype(np.int32), columns=headers, index=None)
+	n_headers=mtrx.shape[1]-2
+	headers = list(mtrx.shape) + ['']*n_headers
+	df = pd.DataFrame(data=mtrx.astype(np.int32), columns=headers, index=None)
 	df.to_csv(path, sep=' ',index=False, index_label=False)
+
 
 
 def data2bow(data, word2idx):
 	'''	
-		Converts idx_description to bow a VxD
-		D: documents (idx_description)		
-		V: Vocabulary
+		INPUT
+			data: a pandas.DataFrame
+							processes column idx_description
+
+		OUTPUT
+			bow: bag-of-words VxD numpy matrix 		
+					D: documents (idx_description)		
+					V: Vocabulary
 		
 	'''	
 	nrows= data.shape[0]
@@ -64,7 +93,18 @@ def data2bow(data, word2idx):
 
 def data2idx(data, word2idx):
 	'''	
-		Converts a token_description column to idx_description
+		INPUT
+			data: pandas.DataFrame
+						column: token_description
+
+			word2idx: dict 
+							keys:tokens, 
+							values:integer				
+
+		OUTPUT
+			data: pandas.DataFrame
+						column: token_description -> idx_description
+		
 	'''	
 	nrows=data.shape[0]
 	token_count=0
@@ -78,10 +118,24 @@ def data2idx(data, word2idx):
 		sys.stdout.write('document:%d of %d\tVOCAB:%d\tWORD COUNT:%d\t\r' % (i, nrows, len(word2idx), token_count))
 		sys.stdout.flush()
 	data= data.rename(columns={'token_description': 'idx_description'})
-	print()
+	print('')
 	return data 
 
 def token2idx(tokens, word2idx):
+	'''	
+		INPUT
+			tokens: a list of strings
+							
+			word2idx: dict 
+							keys:tokens, 
+							values:integer				
+
+		OUTPUT
+			bow: bag-of-words VxD numpy matrix 		
+					D: documents (idx_description)		
+					V: Vocabulary
+		
+	'''	
 	nextidx= max(word2idx.values())+1 if len(word2idx)>0  else 0	
 	indexes= [] 
 	for t in tokens:
