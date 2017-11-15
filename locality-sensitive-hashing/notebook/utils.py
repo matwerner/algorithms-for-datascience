@@ -5,13 +5,13 @@
 '''
 # from nltk import download
 import string 
-
+import sys 
 from nltk.corpus import stopwords as _stopwords
 from nltk.stem import * 
 
-def tokenizer(tokens, stopwords=None, stemmer=None): 
+def tokenizer(sentences, stopwords=None, stemmer=None): 
 	# print('%s\r' %(tokens))
-	tokens= str(tokens).split(' ')
+	tokens= str(sentences).split(' ')
 	tokens= [t for t in tokens if not(t=='')]
 	# import code; code.interact(local=dict(globals(), **locals()))
 	
@@ -28,6 +28,37 @@ def tokenizer(tokens, stopwords=None, stemmer=None):
 	tokens = [t for t in tokens if not(t == None)]
 	
 	return ' '.join(tokens)
+
+
+def data2idx(data, word2idx):
+	'''	
+		Converts a token_description column to idx_description
+	'''	
+	nrows=data.shape[0]
+	token_count=0
+	for i in range(nrows):
+		# import code; code.interact(local=dict(globals(), **locals()))
+
+		tokens=data.loc[i,'token_description'].split(' ')	
+		indexes= token2idx(tokens , word2idx)
+		token_count+=len(indexes)
+		data.loc[i,'token_description']=" ".join([str(idx) for idx in indexes])
+		
+		sys.stdout.write('document:%d of %d\tVOCAB:%d\tWORD COUNT:%d\t\r' % (i, nrows, len(word2idx), token_count))
+		sys.stdout.flush()
+	data= data.rename(columns={'token_description': 'idx_description'})
+	print()
+	return data 
+
+def token2idx(tokens, word2idx):
+	nextidx= max(word2idx.values())+1 if len(word2idx)>0  else 0	
+	indexes= [] 
+	for t in tokens:
+		if not(t in word2idx):
+			word2idx[t]=nextidx
+			nextidx+=1
+		indexes.append(word2idx[t]) 
+	return indexes
 
 
 def get_stopwords(lang='portuguese'):	
