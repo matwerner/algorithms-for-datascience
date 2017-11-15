@@ -59,7 +59,9 @@ def matrix2txt(mtrx, filename='mtrx.txt'):
 	INPUT
 		mtrx: a generic numpy matrix ex: bow or dist
 	OUTPUT
-		-
+		matrix representation in text format
+		header: nrows ncols
+		body: matrix
 	'''	
 	path= '../../locality-sensitive-hashing/datasets/' + filename	
 	n_headers=mtrx.shape[1]-2
@@ -67,6 +69,21 @@ def matrix2txt(mtrx, filename='mtrx.txt'):
 	df = pd.DataFrame(data=mtrx.astype(np.int32), columns=headers, index=None)
 	df.to_csv(path, sep=' ',index=False, index_label=False)
 
+
+def word2idx2txt(word2idx,filename='word2idx.txt'):
+	'''		
+	INPUT
+		word2idx: dict 
+			keys:token
+			value:idx
+
+	OUTPUT
+		-
+	'''	
+	idx2word = {v:k for k,v in word2idx.items()}        
+	path= '../../locality-sensitive-hashing/datasets/' + filename	
+	df = pd.DataFrame.from_dict(idx2word,orient='index')
+	df.to_csv(path, sep=' ',index=True, index_label=False,header=None)
 
 
 def data2bow(data, word2idx):
@@ -79,7 +96,9 @@ def data2bow(data, word2idx):
 			bow: bag-of-words VxD numpy matrix 		
 					D: documents (idx_description)		
 					V: Vocabulary
-		
+			example: if word w<=>idx appears 10 times on document d then
+					bow[idx,d]=10
+
 	'''	
 	nrows= data.shape[0]
 	ncols=len(word2idx)
