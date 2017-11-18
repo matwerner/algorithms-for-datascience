@@ -13,11 +13,23 @@ import re
 from nltk.corpus import stopwords as _stopwords
 from nltk.stem import * 
 
+INVALID_TOKENS=[None, '', ' ']
+
 def tokenizer2(rawtxt, stopwords=None, stemmer=None): 
-	# print('%s\r' %(tokens))
+	'''
+		INPUT
+			rawtxt a string with arbitrary characters
+
+		OUTPUT
+			string: list of words complient with
+						word in a-z, A-Z, 0-9, / 
+						special portuguese characters also included: ã, ç, há
+						^[a-z\u00E0-\u00FCA-Z\u00E0-\u00FC]+$/i
+
+	'''
 	txt= preprocess(str(rawtxt))
 	tokens= txt.split(' ')
-	tokens= [t for t in tokens if not(t=='')]
+	tokens= [t for t in tokens if not(t in INVALID_TOKENS)]
 		
 	if stopwords is None:
 		stopwords= get_stopwords()
@@ -25,19 +37,20 @@ def tokenizer2(rawtxt, stopwords=None, stemmer=None):
 	if stemmer is None:
 		stemmer= get_stemmer()		
 
-	tokens = [t.lower() for t in tokens] 							 # to lowercase	
-	tokens = [remove_puctuation(t) for t in tokens] 	
-	tokens = [t for t in tokens if t not in stopwords] # remove stopwords
-	tokens = [stemmer.stem(t) for t in tokens] 				# stemmify	
-	tokens = [t for t in tokens if not(t == None)]
-	tokens = [t for t in tokens if not(t=='')]
+	tokens = [t.lower() for t in tokens] 							  # to lowercase	
+	tokens = [t for t in tokens if t not in stopwords]  # remove stopwords
+	tokens = [stemmer.stem(t) for t in tokens] 					# stemmify			
+	tokens = [re.sub(r'[^a-z0-9]','', t) for t in tokens]
+	tokens = [t for t in tokens if not(t in INVALID_TOKENS)]
 
 	return ' '.join(tokens)
 
 def preprocess(rawtxt):
 	'''
+		Performs operations on entire rawtxt (word set)
+
 		INPUT
-			rawtxt a string with arbitrary characters
+			rawtxt a string with arbitrary characters. 
 
 		OUTPUT
 			txt: list of words complient with
@@ -214,26 +227,34 @@ def get_stemmer(lang='portuguese'):
 	return SnowballStemmer(lang) 
 
 def remove_puctuation(s):
-# 	'''
-# 		s is a string with punctuation; converts unicode to string which might get data loss
-# 			url: https://stackoverflow.com/questions/23175809/typeerror-translate-takes-one-argument-2-given-python
-# 					 https://pypi.python.org/pypi/Unidecode
-# 					 https://stackoverflow.com/questions/34293875/how-to-remove-punctuation-marks-from-a-string-in-python-3-x-using-translate
-# 	'''	
-# 	# return str(s).translate(None, string.punctuation)
-	# s = unidecode.unidecode(s) # Converts unicode s into closest ascii s, removes accents
-# 	if s: 
-# 		# This uses the 3-argument version of str.maketrans
-# 		# with arguments (x, y, z) where 'x' and 'y'
-# 		# must be equal-length strings and characters in 'x'
-# 		# are replaced by characters in 'y'. 'z'
-# 		# is a string (string.punctuation here)
-# 		# where each character in the string is mapped
-# 		# to None
-	s= s.translate(str.maketrans('','',string.punctuation)) # removes punctuation
-	s= s.translate(str.maketrans('','','\n')) 							# removes \n
-	s= s.translate(str.maketrans('','','\t')) 							# removes \t
-	s= s.translate(str.maketrans('','','\r')) 							# removes \r
+	'''
+		replaces punctuation with space
 
+		INPUT 
+		s unformated string
+		s is a string with punctuation; converts unicode to string which might get data loss
+ 				url: https://stackoverflow.com/questions/23175809/typeerror-translate-takes-one-argument-2-given-python
+ 					 https://pypi.python.org/pypi/Unidecode
+ 					 https://stackoverflow.com/questions/34293875/how-to-remove-punctuation-marks-from-a-string-in-python-3-x-using-translate
+ 	'''	
+	delimiters=  string.punctuation 
+	delimiters+= '\n\r\t' 												# additions
+	this_translation=str.maketrans(delimiters,' '*len(delimiters))
+	s= s.translate(this_translation) # removes punctuation	 								
 	return s
 
+if __name__ == '__main__':
+	#SANITY CHECK
+	examples=[
+	'Desenvolvimento Front-End de aplicacoes web. Engloba: desenvolvimento cross-browser/cross-plataform/responsive-design, etc.',
+	'fundamental–',
+	'“reports”'	
+	]
+	this_stemmer= get_stemmer()
+	this_stopwords=get_stopwords()
+	for i, exam in enumerate(examples):	
+		tokenized = tokenizer2(exam, stemmer=this_stemmer, stopwords=this_stopwords)	
+		print('%d\tbefore\t%s' % (i,exam))
+		print('%d\tafter\t%s' %  (i,tokenized))
+	
+	
