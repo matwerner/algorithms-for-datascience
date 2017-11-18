@@ -3,12 +3,54 @@
 	
 	Utility functions for text edition
 '''
+import pandas as pd 
 import numpy as np 
 import string 
 import sys 
+import re
+
 
 from nltk.corpus import stopwords as _stopwords
 from nltk.stem import * 
+
+def tokenizer2(rawtxt, stopwords=None, stemmer=None): 
+	# print('%s\r' %(tokens))
+	txt= preprocess(str(rawtxt))
+	tokens= txt.split(' ')
+	tokens= [t for t in tokens if not(t=='')]
+		
+	if stopwords is None:
+		stopwords= get_stopwords()
+
+	if stemmer is None:
+		stemmer= get_stemmer()		
+
+	tokens = [t.lower() for t in tokens] 							 # to lowercase	
+	tokens = [remove_puctuation(t) for t in tokens] 	
+	tokens = [t for t in tokens if t not in stopwords] # remove stopwords
+	tokens = [stemmer.stem(t) for t in tokens] 				# stemmify	
+	tokens = [t for t in tokens if not(t == None)]
+	tokens = [t for t in tokens if not(t=='')]
+
+	return ' '.join(tokens)
+
+def preprocess(rawtxt):
+	'''
+		INPUT
+			rawtxt a string with arbitrary characters
+
+		OUTPUT
+			txt: list of words complient with
+						word in a-z, A-Z, 0-9, / 
+						special portuguese characters also included: ã, ç, há
+						^[a-z\u00E0-\u00FCA-Z\u00E0-\u00FC]+$/i
+
+	'''
+	txt = remove_puctuation(rawtxt)
+
+	#every invalid character is a split word
+	txt= re.sub(r'^[a-z\u00E0-\u00FCA-Z\u00E0-\u00FC]+$/i', ' ', txt)
+	return txt
 
 
 
@@ -194,3 +236,4 @@ def remove_puctuation(s):
 	s= s.translate(str.maketrans('','','\r')) 							# removes \r
 
 	return s
+
