@@ -9,6 +9,8 @@ import string
 import sys 
 import re
 
+#making some profiling 
+from datetime import datetime
 
 from nltk.corpus import stopwords as _stopwords
 from nltk.stem import * 
@@ -111,8 +113,14 @@ def bow2dist(bow, verbose=True):
 
 def matrix2txt(mtrx, filename='mtrx.txt'):
 	'''		
+	Stores numpy matrix to a file
+
 	INPUT
 		mtrx: a generic numpy matrix ex: bow or dist
+	
+		filename: name for the text file
+						default:'mtrx.txt'
+
 	OUTPUT
 		matrix representation in text format
 		header: nrows ncols
@@ -173,15 +181,15 @@ def data2bow(data, word2idx, colname='idx_description'):
 
 	return bow.T  
 
-def data2idx(data, word2idx):
+def data2idx(data, word2idx, colname='token_description', new_colname='idx_description'):
 	'''	
 		INPUT
 			data: pandas.DataFrame
-						column: token_description
 
-			word2idx: dict 
-							keys:tokens, 
-							values:integer				
+			word2idx: dict(keys:tokens,values:integer)											
+
+			colname: pandas.DataFrame column to process
+							default: 'idx_description'
 
 		OUTPUT
 			data: pandas.DataFrame
@@ -190,16 +198,24 @@ def data2idx(data, word2idx):
 	'''	
 	nrows=data.shape[0]
 	token_count=0
+	starttime= datetime.now()
 	for i in range(nrows):
 		# import code; code.interact(local=dict(globals(), **locals()))
-		tokens=data.loc[i,'token_description'].split(' ')	
+		tokens=data.loc[i,colname].split(' ')	
 		indexes= token2idx(tokens , word2idx)
 		token_count+=len(indexes)
-		data.loc[i,'token_description']=" ".join([str(idx) for idx in indexes])
+		data.loc[i,colname]=" ".join([str(idx) for idx in indexes])
 		
-		sys.stdout.write('document:%d of %d\tVOCAB:%d\tWORD COUNT:%d\t\r' % (i, nrows, len(word2idx), token_count))
+		elapsed_time= datetime.now() - starttime
+
+		status=(i, nrows, len(word2idx), token_count, str(elapsed_time).split('.')[0])
+		sys.stdout.write('document:%d of %d\tVOCAB:%d\tWORD COUNT:%d\t\tELAPSED TIME:%s\r' % status)
 		sys.stdout.flush()
-	data= data.rename(columns={'token_description': 'idx_description'})
+
+	if new_colname:	
+		old2new={}
+		old2new[colname]=new_colname
+		data= data.rename(columns=old2new)		
 	print('')
 	return data 
 
@@ -250,17 +266,29 @@ def remove_puctuation(s):
 	return s
 
 if __name__ == '__main__':
-	#SANITY CHECK
-	examples=[
-	'Desenvolvimento Front-End de aplicacoes web. Engloba: desenvolvimento cross-browser/cross-plataform/responsive-design, etc.',
-	'fundamental–',
-	'“reports”'	
-	]
+	dataset_path=  '../../locality-sensitive-hashing/datasets/development.json' 
+	data = pd.read_json(dataset_path, orient='records')	
+	# N = len(data.index)
+
 	this_stemmer= get_stemmer()
 	this_stopwords=get_stopwords()
-	for i, exam in enumerate(examples):	
-		tokenized = tokenizer2(exam, stemmer=this_stemmer, stopwords=this_stopwords)	
-		print('%d\tbefore\t%s' % (i,exam))
-		print('%d\tafter\t%s' %  (i,tokenized))
+	tokenfy = lambda x : tokenizer2(x, stemmer=this_stemmer, stopwords=this_stopwords)
+
+	data['token_description']=data['description'].apply(tokenfy)
+	word2idx={}
+	df=data2idx(data, word2idx, colname='token_description', new_colname='idx_description')
+	word2idx2txt(word2idx, filename='word2idx13k.txt')
+	bow13k=data2bow(data, word2idx)
+	matrix2txt(bow12k, filename='bow13k.txt')
+	dist=bow2dist(bow)
+
+
+	# for i in range(N):		
+
+	# import code; code.interact(local=dict(globals(), **locals()))
+	# for i, exam in enumerate(examples):	
+	# 	tokenized = tokenizer2(exam, stemmer=this_stemmer, stopwords=this_stopwords)	
+	# 	print('%d\tbefore\t%s' % (i,exam))
+	# 	print('%d\tafter\t%s' %  (i,tokenized))
 	
 	
