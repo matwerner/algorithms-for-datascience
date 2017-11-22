@@ -127,10 +127,13 @@ def matrix2txt(mtrx, filename='mtrx.txt'):
 
 def word2idx2txt(word2idx,filename='word2idx.txt'):
 	'''		
+	Stores word2idx dictionary to a file
+
 	INPUT
-		word2idx: dict 
-			keys:token
-			value:idx
+		word2idx: dict(keys:tokens,values:integer)											
+
+		filename: name for the text file
+						default:'word2idx.txt'
 
 	OUTPUT
 		-
@@ -141,15 +144,20 @@ def word2idx2txt(word2idx,filename='word2idx.txt'):
 	df.to_csv(path, sep=' ',index=True, index_label=False,header=None)
 
 
-def data2bow(data, word2idx):
+def data2bow(data, word2idx, colname='idx_description'):
 	'''	
 		INPUT
 			data: a pandas.DataFrame
 							processes column idx_description
+			
+			word2idx: dict(keys:tokens,values:integer)											
+
+			colname: pandas.DataFrame column to process
+							default: 'idx_description'
 
 		OUTPUT
 			bow: bag-of-words VxD numpy matrix 		
-					D: documents (idx_description)		
+					D: documents 
 					V: Vocabulary
 			example: if word w<=>idx appears 10 times on document d then
 					bow[idx,d]=10
@@ -159,7 +167,7 @@ def data2bow(data, word2idx):
 	ncols=len(word2idx)
 	bow= np.zeros((nrows, ncols),dtype=np.int32)
 	for r in range(nrows):		
-		indexes=list(map(int,data.loc[r,'idx_description'].split(' '))	)		
+		indexes=list(map(int,data.loc[r,colname].split(' '))	)		
 		for c in indexes:
 			bow[r, c]+=1
 
@@ -200,9 +208,7 @@ def token2idx(tokens, word2idx):
 		INPUT
 			tokens: a list of strings
 							
-			word2idx: dict 
-							keys:tokens, 
-							values:integer				
+			word2idx: dict(keys:tokens,values:integer)				
 
 		OUTPUT
 			bow: bag-of-words VxD numpy matrix 		
