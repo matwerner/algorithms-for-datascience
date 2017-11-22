@@ -107,7 +107,7 @@ def bow2dist(bow, verbose=True):
 			dist[i,j]=np.sqrt(np.dot(dif,dif))
 			elapsed_time= datetime.now() - starttime
 			if verbose:
-				status= (i,j,dist[i,j], str(elapsed_time).split('.'))
+				status= (i,j,dist[i,j], str(elapsed_time).split('.')[0])
 				sys.stdout.write('%05d,%05d:\t%0.2f\t\tELAPSED TIME:%s\r' % status)
 				sys.stdout.flush()
 	print('')				
@@ -279,7 +279,7 @@ if __name__ == '__main__':
 
 	data['token_description']=data['description'].apply(tokenfy)
 	word2idx={}
-	df=data2idx(data, word2idx, colname='token_description', new_colname='idx_description')
+	data=data2idx(data, word2idx, colname='token_description', new_colname='idx_description')
 	word2idx2txt(word2idx, filename='word2idx13k.txt')
 	bow13k=data2bow(data, word2idx)
 	matrix2txt(bow13k, filename='bow13k.txt')
