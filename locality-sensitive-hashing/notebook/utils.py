@@ -100,12 +100,15 @@ def bow2dist(bow, verbose=True):
 	'''	
 	d = bow.shape[1]
 	dist=np.zeros((d,d), dtype=np.float32)
+	starttime= datetime.now()
 	for i in range(d):
 		for j in range(0,i):
 			dif = bow[:,i]-bow[:,j]
 			dist[i,j]=np.sqrt(np.dot(dif,dif))
+			elapsed_time= datetime.now() - starttime
 			if verbose:
-				sys.stdout.write('%05d,%05d:\t%0.2f\r' % (i,j,dist[i,j]))
+				status= (i,j,dist[i,j], str(elapsed_time).split('.'))
+				sys.stdout.write('%05d,%05d:\t%0.2f\t\tELAPSED TIME:%s\r' % status)
 				sys.stdout.flush()
 	print('')				
 	return dist
@@ -279,8 +282,8 @@ if __name__ == '__main__':
 	df=data2idx(data, word2idx, colname='token_description', new_colname='idx_description')
 	word2idx2txt(word2idx, filename='word2idx13k.txt')
 	bow13k=data2bow(data, word2idx)
-	matrix2txt(bow12k, filename='bow13k.txt')
-	dist=bow2dist(bow)
+	matrix2txt(bow13k, filename='bow13k.txt')
+	dist=bow2dist(bow13k)
 
 
 	# for i in range(N):		
