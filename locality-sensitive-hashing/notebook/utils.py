@@ -3,6 +3,9 @@
 	
 	Utility functions for text edition
 '''
+#Invoking cmd line experiments 
+import argparse
+
 import pandas as pd 
 import numpy as np 
 import string 
@@ -11,6 +14,7 @@ import re
 
 #making some profiling 
 from datetime import datetime
+
 
 from nltk.corpus import stopwords as _stopwords
 from nltk.stem import * 
@@ -102,19 +106,22 @@ def bow2dist(bow, verbose=True):
 	d = bow.shape[1]
 	dist=np.zeros((d,d), dtype=np.float32)
 	starttime= datetime.now()
+	total= d*(d-1)*0.5
+	counter=0
 	for i in range(d):
 		for j in range(0,i):
 			dif = bow[:,i]-bow[:,j]
 			dist[i,j]=np.sqrt(np.dot(dif,dif))
-			elapsed_time= datetime.now() - starttime
+			
 			if verbose:
-				status= (i,j,dist[i,j], str(elapsed_time).split('.')[0])
-				sys.stdout.write('%05d,%05d:\t%0.2f\t\tELAPSED TIME:%s\r' % status)
+				status= (i,j,dist[i,j], elapsed_time(starttime), float(counter) *100 / total)				
+				sys.stdout.write('%05d,%05d:\t%0.2f\t\tELAPSED TIME:%s\tCOMPLETE:%.2f\r' % status)
 				sys.stdout.flush()
+			counter+=1
 	print('')				
 	return dist
 
-def bow2random_projection(bow, projection_type= 'sparse'):
+def bow2random_projection(bow, eps=0.3, projection_type= 'sparse'):
 	'''		
 	INPUT
 		bow: bag-of-words VxD numpy matrix 		
@@ -131,9 +138,9 @@ def bow2random_projection(bow, projection_type= 'sparse'):
 	try:
 		projection_type= projection_type.lower()
 		if projection_type=='gaussian':
-			transformer=random_projection.GaussianRandomProjection()
+			transformer=random_projection.GaussianRandomProjection(eps=eps)
 		elif projection_type=='sparse':
-			transformer=random_projection.GaussianRandomProjection()
+			transformer=random_projection.SparseRandomProjection(eps=eps)
 		else:
 			raise ValueError("only handles 'gaussian' or 'sparse'")
 
@@ -207,10 +214,15 @@ def data2bow(data, word2idx, colname='idx_description'):
 	nrows= data.shape[0]
 	ncols=len(word2idx)
 	bow= np.zeros((nrows, ncols),dtype=np.int32)
+	starttime= datetime.now()
 	for r in range(nrows):		
 		indexes=list(map(int,data.loc[r,colname].split(' '))	)		
-		for c in indexes:
+		for i, c in enumerate(indexes):
 			bow[r, c]+=1
+			status= (r, ncols, i, len(indexes), elapsed_time(starttime))
+			sys.stdout.write('data2bow:%d of %d\ttokens in documents:%d of %d\t\tELAPSED TIME:%s\r' % status)
+			sys.stdout.flush()
+			
 
 	return bow.T  
 
@@ -237,12 +249,10 @@ def data2idx(data, word2idx, colname='token_description', new_colname='idx_descr
 		tokens=data.loc[i,colname].split(' ')	
 		indexes= token2idx(tokens , word2idx)
 		token_count+=len(indexes)
-		data.loc[i,colname]=" ".join([str(idx) for idx in indexes])
-		
-		elapsed_time= datetime.now() - starttime
+		data.loc[i,colname]=" ".join([str(idx) for idx in indexes])		
 
-		status=(i, nrows, len(word2idx), token_count, str(elapsed_time).split('.')[0])
-		sys.stdout.write('document:%d of %d\tVOCAB:%d\tWORD COUNT:%d\t\tELAPSED TIME:%s\r' % status)
+		status=(i, nrows, len(word2idx), token_count, elapsed_time(starttime))
+		sys.stdout.write('data2idx:%d of %d\tVOCAB:%d\tWORD COUNT:%d\t\tELAPSED TIME:%s\r' % status)
 		sys.stdout.flush()
 
 	if new_colname:	
@@ -298,28 +308,112 @@ def remove_puctuation(s):
 	s= s.translate(this_translation) # removes punctuation	 								
 	return s
 
-def main():
-	dataset_path=  '../../locality-sensitive-hashing/datasets/development.json' 
-	data = pd.read_json(dataset_path, orient='records')	
+def elapsed_time(starttime):
+	this_timedelta= datetime.now() - starttime
+	return str(this_timedelta).split('.')[0]
+
+def run(projection_type, eps, refresh, store):
+	dataset_path=  '../../locality-sensitive-hashing/datasets/' 
+	if refresh:		
+		devel_path= dataset_path + 'development.json'
+		print('reading...\r')
+		data = pd.read_json(dataset_path, orient='records')	
+		print('reading...done\r')
+
+		print('')
+		print('tokenizing...\r')
+		this_stemmer= get_stemmer()
+		this_stopwords=get_stopwords()
+		tokenfy = lambda x : tokenizer2(x, stemmer=this_stemmer, stopwords=this_stopwords)
 	
+		data['token_description']=data['description'].apply(tokenfy)
+		print('tokenizing...done\r')
 
-	this_stemmer= get_stemmer()
-	this_stopwords=get_stopwords()
-	tokenfy = lambda x : tokenizer2(x, stemmer=this_stemmer, stopwords=this_stopwords)
+		print('')
+		print('indexing...\r')
+		word2idx={}
+		data=data2idx(data, word2idx, colname='token_description', new_colname='idx_description')
+		print('indexing...done\r')
 
-	data['token_description']=data['description'].apply(tokenfy)
-	word2idx={}
-	data=data2idx(data, word2idx, colname='token_description', new_colname='idx_description')
-	word2idx2txt(word2idx, filename='word2idx2.txt')
-	bow2=data2bow(data, word2idx)
-	matrix2txt(bow2, filename='bow2.txt')
 
-	proj= bow2random_projection(bow2)
-	print('reduced dimensions:%s' % proj.shape)
-	matrix2txt(proj, filename='sparse_bow.txt')
-	sparse_dist=bow2dist(proj)
-	matrix2txt(sparse_dist, filename='sparce_distance_matrix.txt')
+		print('')
+		print('generating bag of words...\r')
+		print('')
+		bow2=data2bow(data, word2idx)
+		print('generating bag of words...done\r')
+
+		if store: 
+			print('')
+			print('storing indexes...\r')
+			word2idx2txt(word2idx, filename='word2idx2.txt')
+			print('storing indexes...done\r')
+		
+			print('')
+			print('storing bag of words...')
+			matrix2txt(bow2, filename='bow2.txt')
+			print('storing bag of words...done\r')
+
+	else:
+		print('')
+		print('retrieving word2idx...')
+		word2idx_path=  dataset_path + 'word2idx2.txt'
+		df= pd.read_csv(word2idx_path, sep= ' ', index_col=0, header=None)		
+		word2idx= {k:v for k, v in zip(df.index, df.iloc[:,0]) } 
+		print('retrieving word2idx...done')
+
+		print('retrieving bow2...')
+		bow2_path=  dataset_path + 'bow2.txt'
+		df= pd.read_csv(bow2_path, sep= ' ', index_col=None, header=None, skiprows=1 ) 
+		bow2= df.as_matrix()
+		print('retrieving bow2...done')
+
+	print('')
+	print('compute random projection...\r')	
+	proj= bow2random_projection(bow2, projection_type=projection_type, eps=eps)
+	print('compute random projection... done new (reduced) dimensions:%dx%d\r' % proj.shape)
+
+	# print('')
+	# print('storing bag of words...\r')
+	# matrix2txt(proj, filename='sparse_bow.txt')
+	# print('storing bag of words...done\r')
+
+	print('')
+	print('compute %s distance...\r' % (projection_type))
+	proj_dist=bow2dist(proj)
+	print('compute %s distance...done\r' % (projection_type))
+	
+	print('')
+	print('storing %s distance matrix...\r' % (projection_type))
+	filename= '%s_%.1f_distance_matrix.txt' % (projection_type, eps)	
+	matrix2txt(proj_dist, filename=filename)
+	print('storing %s distance matrix...done\r' % (projection_type))	
 
 	
 if __name__ == '__main__':
-	main()
+	parser = argparse.ArgumentParser(description='random_projection parser')
+
+	parser.add_argument('-p', action="store", dest="projection_type", type=str, default='sparse', 
+		help="""projection model: sparse or gaussian see sklearn.random_projection 
+		for details default: sparse""")
+
+	parser.add_argument('-e', action="store", dest="eps", type=float, default=0.3,
+		help="""a distorsion tolerance for random_projection must be between 0-1 
+		see sklearn.random_projection for details default: 0.3""")
+
+	parser.add_argument('-s', action="store", dest="store", type=bool, default=False,
+	help="""stores intermediary result final distance is always stored
+		<projection>_<eps>_distance_matrix.txt""")
+
+	parser.add_argument('-r', action="store", dest="refresh", type=bool, default=False,
+	help="""refreshes data model: tokenization, word2idx and bow""")
+
+	args = parser.parse_args()
+
+	projection_type = args.projection_type
+	eps = args.eps
+	store = args.store 
+	refresh = args.refresh 
+	params=(projection_type,eps, store, refresh)  
+	print('starting simulation:')  
+	print('projection_type:%s\teps:%.1f\tstore:%d\trefresh:%d'% params)  
+	run(projection_type, eps, store, refresh)
