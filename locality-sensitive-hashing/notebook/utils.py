@@ -15,6 +15,7 @@ from datetime import datetime
 from nltk.corpus import stopwords as _stopwords
 from nltk.stem import * 
 
+from sklearn import random_projection
 INVALID_TOKENS=[None, '', ' ']
 
 def tokenizer2(rawtxt, stopwords=None, stemmer=None): 
@@ -112,6 +113,35 @@ def bow2dist(bow, verbose=True):
 				sys.stdout.flush()
 	print('')				
 	return dist
+
+def bow2random_projection(bow, projection_type= 'sparse'):
+	'''		
+	INPUT
+		bow: bag-of-words VxD numpy matrix 		
+
+		type: Gaussian for gaussian projection OR
+					Sparse 	 for Achiloptas projection
+					default: Sparse
+
+
+	OUTPUT	
+		proj: vxD matrix v << V
+
+	'''	
+	try:
+		projection_type= projection_type.lower()
+		if projection_type=='gaussian':
+			transformer=random_projection.GaussianRandomProjection()
+		elif projection_type=='sparse':
+			transformer=random_projection.GaussianRandomProjection()
+		else:
+			raise ValueError("only handles 'gaussian' or 'sparse'")
+
+		resultT= transformer.fit_transform(bow.T)	
+		result=resultT.T
+	except ex: 
+		result= None 
+	return result
 
 
 def matrix2txt(mtrx, filename='mtrx.txt'):
@@ -283,8 +313,12 @@ def main():
 	word2idx2txt(word2idx, filename='word2idx2.txt')
 	bow2=data2bow(data, word2idx)
 	matrix2txt(bow2, filename='bow2.txt')
-	dist=bow2dist(bow13k)
-	matrix2txt(dist, filename='distance_matrix2.txt')
+
+	proj= bow2random_projection(bow2)
+	print('reduced dimensions:%s' % proj.shape)
+	matrix2txt(proj, filename='sparse_bow.txt')
+	sparse_dist=bow2dist(proj)
+	matrix2txt(sparse_dist, filename='sparce_distance_matrix.txt')
 
 	
 if __name__ == '__main__':
