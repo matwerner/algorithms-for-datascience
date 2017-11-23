@@ -268,10 +268,10 @@ def remove_puctuation(s):
 	s= s.translate(this_translation) # removes punctuation	 								
 	return s
 
-if __name__ == '__main__':
+def main():
 	dataset_path=  '../../locality-sensitive-hashing/datasets/development.json' 
 	data = pd.read_json(dataset_path, orient='records')	
-	# N = len(data.index)
+	
 
 	this_stemmer= get_stemmer()
 	this_stopwords=get_stopwords()
@@ -280,18 +280,12 @@ if __name__ == '__main__':
 	data['token_description']=data['description'].apply(tokenfy)
 	word2idx={}
 	data=data2idx(data, word2idx, colname='token_description', new_colname='idx_description')
-	word2idx2txt(word2idx, filename='word2idx13k.txt')
-	bow13k=data2bow(data, word2idx)
-	matrix2txt(bow13k, filename='bow13k.txt')
+	word2idx2txt(word2idx, filename='word2idx2.txt')
+	bow2=data2bow(data, word2idx)
+	matrix2txt(bow2, filename='bow2.txt')
 	dist=bow2dist(bow13k)
+	matrix2txt(dist, filename='distance_matrix2.txt')
 
-
-	# for i in range(N):		
-
-	# import code; code.interact(local=dict(globals(), **locals()))
-	# for i, exam in enumerate(examples):	
-	# 	tokenized = tokenizer2(exam, stemmer=this_stemmer, stopwords=this_stopwords)	
-	# 	print('%d\tbefore\t%s' % (i,exam))
-	# 	print('%d\tafter\t%s' %  (i,tokenized))
 	
-	
+if __name__ == '__main__':
+	main()

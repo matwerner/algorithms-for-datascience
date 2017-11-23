@@ -2,9 +2,12 @@ import numpy as np
 import sys
 import json
 # DISTANCE_MATRIX_FILE_PATH = "/home/daniel/Repositories/big_outputs/LSH/datasets/datasets/distance_matrix.txt"
-DISTANCE_MATRIX_FILE_PATH = "/home/daniel/Repositories/algorithms-for-datascience/locality-sensitive-hashing/Results exploration/testingDistancesMatrix.txt"
-DOCUMENTS_JSON_PATH = "/home/daniel/Repositories/algorithms-for-datascience/locality-sensitive-hashing/datasets/Dataset-Treino-Anonimizado-3.json"
-EQUAL_DOCUMENTS_FILE_PATH = "similar_documents.txt" # File containing the documents that are the same
+# DISTANCE_MATRIX_FILE_PATH = "/home/daniel/Repositories/algorithms-for-datascience/locality-sensitive-hashing/Results exploration/testingDistancesMatrix.txt"
+# DOCUMENTS_JSON_PATH = "/home/daniel/Repositories/algorithms-for-datascience/locality-sensitive-hashing/datasets/Dataset-Treino-Anonimizado-3.json"
+# EQUAL_DOCUMENTS_FILE_PATH = "similar_documents.txt" # File containing the documents that are the same
+DISTANCE_MATRIX_FILE_PATH = "../../locality-sensitive-hashing/Results exploration/testingDistancesMatrix.txt"
+DOCUMENTS_JSON_PATH = "../../locality-sensitive-hashing/datasets/Dataset-Treino-Anonimizado-3.json"
+EQUAL_DOCUMENTS_FILE_PATH = "similar_documents2.txt" # File containing the documents that are the same
 
 class DocumentManager:
 	def __init__(self,
