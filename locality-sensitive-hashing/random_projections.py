@@ -15,6 +15,8 @@ import argparse
 
 from sklearn import random_projection
 
+# Relative path to dataset
+DATASET_PATH='../locality-sensitive-hashing/datasets/' 
 
 def bow2rnd_proj(bow, projection_type= 'sparse', eps=0.3):
 	'''		
@@ -78,15 +80,14 @@ def main(projection_type, eps, store, refresh):
 				D<int>: original count of documents			
 
 		
-	'''	
-	dataset_path=  '../../locality-sensitive-hashing/datasets/' 
+	'''		
 
 
 	filename_distance_matrix= '%s_%.1f_distance_matrix.txt' % (projection_type, eps)	
 	filename_projection_bow=  '%s_%.1f_bow.txt' % (projection_type, eps)	
 
 	if refresh:		
-		devel_path= dataset_path + 'development.json'
+		devel_path= DATASET_PATH + 'development.json'
 		print('reading...\r')
 		data = pd.read_json(devel_path, orient='records')	
 		print('reading...done\r')
@@ -127,13 +128,13 @@ def main(projection_type, eps, store, refresh):
 	else:
 		print('')
 		print('retrieving word2idx...')
-		word2idx_path=  dataset_path + 'word2idx2.txt'
+		word2idx_path=  DATASET_PATH + 'word2idx2.txt'
 		df= pd.read_csv(word2idx_path, sep= ' ', index_col=0, header=None)		
 		word2idx= {k:v for k, v in zip(df.index, df.iloc[:,0]) } 
 		print('retrieving word2idx...done')
 
 		print('retrieving bow2...')
-		bow2_path=  dataset_path + 'bow2.txt'
+		bow2_path=  DATASET_PATH + 'bow2.txt'
 		df= pd.read_csv(bow2_path, sep= ' ', index_col=None, header=None, skiprows=1 ) 
 		bow2= df.as_matrix()
 		print('retrieving bow2...done')

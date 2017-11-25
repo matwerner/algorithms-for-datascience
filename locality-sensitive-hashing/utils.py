@@ -22,6 +22,8 @@ from nltk.stem import *
 
 INVALID_TOKENS=[None, '', ' ']
 
+DATASET_PATH= '../locality-sensitive-hashing/datasets/'
+
 def tokenizer2(rawtxt, stopwords=None, stemmer=None): 
 	'''
 		INPUT
@@ -137,7 +139,7 @@ def matrix2txt(mtrx, filename='mtrx.txt'):
 		header: nrows ncols
 		body: matrix
 	'''	
-	path= '../../locality-sensitive-hashing/datasets/' + filename	
+	path= DATASET_PATH + filename	
 	n_headers=mtrx.shape[1]-2
 	headers = list(mtrx.shape) + ['']*n_headers
 	df = pd.DataFrame(data=mtrx.astype(np.int32), columns=headers, index=None)
@@ -158,7 +160,7 @@ def word2idx2txt(word2idx,filename='word2idx.txt'):
 		-
 	'''	
 	idx2word = {v:k for k,v in word2idx.items()}        
-	path= '../../locality-sensitive-hashing/datasets/' + filename	
+	path= DATASET_PATH + filename	
 	df = pd.DataFrame.from_dict(idx2word,orient='index')
 	df.to_csv(path, sep=' ',index=True, index_label=False,header=None)
 
