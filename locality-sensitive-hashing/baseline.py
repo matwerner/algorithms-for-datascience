@@ -23,6 +23,8 @@ DATASET_PATH='../locality-sensitive-hashing/datasets/'
 DISTANCE_MATRICES_PATTERN=DATASET_PATH + '*_distance_matrix.txt'
 CLUSTER_MODELS_PATTERN=DATASET_PATH + '*_cluster.txt'
 
+
+
 def cluster2txt(cluster, filename='distance_cluster.txt'):
 	'''
 		Persists cluster as txt
@@ -65,6 +67,17 @@ def clusterize(dist):
 	return cluster
 		
 
+def kappa_scoring():
+		'''
+		INPUT 
+			cluster<dict<int,int>>: cluster dict int, int 
+
+		OUTPUT
+			scoring<float<M,M>>: cross model comparison			
+	'''	
+	matcher = re.compile('(.*)_clustering.txt$')
+	
+
 
 def distance_matrix_clustering():
 	'''
@@ -102,5 +115,6 @@ def distance_matrix_clustering():
 
 
 if __name__ == '__main__'	:
-	distance_matrix_clustering()
+	# distance_matrix_clustering()
+	kappa_scoring()
 
