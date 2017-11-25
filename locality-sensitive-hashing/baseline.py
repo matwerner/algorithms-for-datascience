@@ -68,16 +68,51 @@ def clusterize(dist):
 		
 
 def kappa_scoring():
-		'''
+	'''
 		INPUT 
 			cluster<dict<int,int>>: cluster dict int, int 
 
 		OUTPUT
 			scoring<float<M,M>>: cross model comparison			
 	'''	
-	matcher = re.compile('(.*)_clustering.txt$')
-	
+	matcher = re.compile('(.*)_cluster.txt$')
+	files=glob.glob(CLUSTER_MODELS_PATTERN)	
+	M=len(files)
+	print('%d files found matching _cluster.txt suffix' % M)
 
+	names=[]
+	for i, file in enumerate(files):	
+		
+		filename=file.split('/')[-1]
+		matchings= matcher.match(filename)
+		data_model=matchings.groups()[0]		
+
+		print('Fetching %d\t%s...' % (i+1,data_model))				
+		if i==0:
+			df= pd.read_csv(file, sep= ' ', index_col=0, header=None)		
+			df.columns=[data_model] 
+		else:
+			df_tmp= pd.read_csv(file, sep= ' ', index_col=0, header=None)		
+			df_tmp.columns=[data_model] 
+			df=pd.concat((df,df_tmp),axis=1)
+		names.append(data_model)
+		print('Fetching %d\t%s...done' % (i+1,data_model))				
+
+
+	S= np.zeros((M,M), dtype=np.float32)
+	N = M*(M-1)/2 + M
+	n=0
+	for r in range(M-1):
+		for c in range(r,M):
+			# import code; code.interact(local=dict(globals(), **locals()))
+			print('%d of %d computing %s vs %s...' % (n+1,N,names[r],names[c]))				
+			x=df[names[r]].as_matrix()
+			y=df[names[c]].as_matrix()
+			S[r,c]=cohen_kappa_score(x,y)
+			print('%d of %d computing %s vs %s...done' % (n+1,N,names[r],names[c]))				
+			n+=1			
+	print(list(df.columns))		
+	print(S)
 
 def distance_matrix_clustering():
 	'''
