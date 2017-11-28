@@ -7,37 +7,35 @@
 	motivation: Distance matrix models
 			 
 '''
-def main(projection_type, eps, store, refresh):
+import pandas as pd 
+from utils import get_stemmer, get_stopwords, tokenizer2, data2idx, data2bow, bow2dist, matrix2txt, word2idx2txt  
+
+import argparse
+
+# Relative path to dataset
+DATASET_PATH='../locality-sensitive-hashing/datasets/' 
+
+
+def main(distance_type,  refresh):
 	'''	
 		INPUT
-		projection_type<string>: Gaussian for gaussian projection OR
+		distance_type<string>: Gaussian for gaussian projection OR
 				Sparse 	 for Achiloptas projection
 				default: Sparse
 
-		eps<float>: threshold for acceptable distorsions 
-				higher eps -> higher theoretical probability of distorsions
-				is bounded between 0-1
-
 		refresh<bool>: refreshes data model, recomputing word2idx, bow
-
-		store<bool>: stores 3 intermediary results: word2idx, bow, proj_bow. 
 
 		OUTPUT
 			dist<float<D,D>>: matrix of distances using random projections algorithm
 			values are always saved following the pattern <projection>_<eps>_distance_matrix.txt						
 				D: original count of documents
 
-			<int<v,D>>: matrix of distances using random projections algorithm
-			values are always saved following the pattern <projection>_<eps>_bow.txt									
-				v<int>: v<<V is the new vocabulary size 
-				D<int>: original count of documents			
 
 		
 	'''		
 
 
-	filename_distance_matrix= '%s_%.1f_distance_matrix.txt' % (projection_type, eps)	
-	filename_projection_bow=  '%s_%.1f_bow.txt' % (projection_type, eps)	
+	filename_distance_matrix= '%s_distance_matrix.txt' % (distance_type)	
 
 	if refresh:		
 		devel_path= DATASET_PATH + 'development.json'
@@ -67,17 +65,6 @@ def main(projection_type, eps, store, refresh):
 		bow2=data2bow(data, word2idx)
 		print('generating bag of words...done\r')
 
-		if store: 
-			print('')
-			print('storing indexes...\r')
-			word2idx2txt(word2idx, filename='word2idx2.txt')
-			print('storing indexes...done\r')
-		
-			print('')
-			print('storing bag of words...')
-			matrix2txt(bow2, filename='bow2.txt')
-			print('storing bag of words...done\r')
-
 	else:
 		print('')
 		print('retrieving word2idx...')
@@ -91,28 +78,18 @@ def main(projection_type, eps, store, refresh):
 		df= pd.read_csv(bow2_path, sep= ' ', index_col=None, header=None, skiprows=1 ) 
 		bow2= df.as_matrix()
 		print('retrieving bow2...done')
+	
 
 	print('')
-	print('compute random projection...\r')	
-	proj= bow2rnd_proj(bow2, projection_type=projection_type, eps=eps)
-	print('compute random projection... done new (reduced) dimensions:%dx%d\r' % proj.shape)
-
-	if store: 
-		print('')
-		print('storing bag of words...\r')
-		matrix2txt(proj, filename=filename_projection_bow)
-		print('storing bag of words...done\r')
-
-	print('')
-	print('compute %s distance...\r' % (projection_type))
-	proj_dist=bow2dist(proj)
-	print('compute %s distance...done\r' % (projection_type))
+	print('compute %s distance...\r' % (distance_type))
+	dist=bow2dist(bow2, verbose=True, distance_type=distance_type)
+	print('compute %s distance...done\r' % (distance_type))
 	
 	print('')
-	print('storing %s distance matrix...\r' % (projection_type))
+	print('storing %s distance matrix...\r' % (distance_type))
 	
-	matrix2txt(proj_dist, filename=filename_distance_matrix)
-	print('storing %s distance matrix...done\r' % (projection_type))	
+	matrix2txt(dist, filename=filename_distance_matrix)
+	print('storing %s distance matrix...done\r' % (distance_type))	
 
 def str2bool(v):
     if v.lower() in ('yes', 'true', 't', 'y', '1'):

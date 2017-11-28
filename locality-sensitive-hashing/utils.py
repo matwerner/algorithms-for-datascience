@@ -19,6 +19,7 @@ from datetime import datetime
 from nltk.corpus import stopwords as _stopwords
 from nltk.stem import * 
 
+# from sklearn.preprocessing import normalize
 
 INVALID_TOKENS=[None, '', ' ']
 
@@ -96,7 +97,8 @@ def tokenizer(sentences, stopwords=None, stemmer=None):
 	
 	return ' '.join(tokens)
 
-def bow2dist(bow, verbose=True):
+
+def bow2dist(bow, verbose=True, distance_type='euclidian'):
 	'''		
 	INPUT
 		bow: bag-of-words VxD numpy matrix 		
@@ -110,11 +112,31 @@ def bow2dist(bow, verbose=True):
 	starttime= datetime.now()
 	total= d*(d-1)*0.5
 	counter=0
+	docnorm={}
+	#Preprocessing bow
+	if distance_type=='jaccard':
+		bow=bow.astype(bool)
+
+	if distance_type=='euclidian':
+		docnorm={key:1 for key in range(d)}
+
+	if distance_type=='normalize':
+		docnorm={key:np.linalg.norm(bow[:,key]) for key in range(d)}
+	
 	for i in range(d):
 		for j in range(0,i):
-			dif = bow[:,i]-bow[:,j]
-			dist[i,j]=np.sqrt(np.dot(dif,dif))
-			
+			if distance_type=='jaccard':
+				# import code; code.interact(local=dict(globals(), **locals()))
+				set_diff =np.bitwise_xor(bow[:,i],bow[:,j])
+				set_union=np.bitwise_or(bow[:,i],bow[:,j])
+				dist[i,j]=float(sum(set_diff))/sum(set_union)
+			else:
+				dif = bow[:,i]-bow[:,j]				
+				dist[i,j]=np.sqrt(np.dot(dif,dif))/(docnorm[i]*docnorm[j])  
+
+
+
+
 			if verbose:
 				status= (i,j,dist[i,j], elapsed_time(starttime), float(counter) *100 / total)				
 				sys.stdout.write('%05d,%05d:\t%0.2f\t\tELAPSED TIME:%s\tCOMPLETE:%.2f\r' % status)
