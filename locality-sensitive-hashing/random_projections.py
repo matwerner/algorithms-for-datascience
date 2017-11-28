@@ -74,7 +74,7 @@ def main(projection_type, eps, store, refresh):
 			values are always saved following the pattern <projection>_<eps>_distance_matrix.txt						
 				D: original count of documents
 
-			<int<v,D>>: matrix of distances using random projections algorithm
+			proj_bow<int<v,D>>: projection over bag-of-words using random projections algorithm
 			values are always saved following the pattern <projection>_<eps>_bow.txt									
 				v<int>: v<<V is the new vocabulary size 
 				D<int>: original count of documents			
