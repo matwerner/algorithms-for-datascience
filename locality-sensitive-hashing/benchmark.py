@@ -18,6 +18,8 @@ import numpy as np
 #ML stuff
 from sklearn.metrics import cohen_kappa_score
 
+
+
 # Relative path to dataset
 DATASET_PATH='../locality-sensitive-hashing/datasets/'
 DISTANCE_MATRICES_PATTERN=DATASET_PATH + '*_distance_matrix.txt'
@@ -55,7 +57,7 @@ def clusterize(dist):
 	index= np.arange(ncols)
 	cluster={}
 	cluster_count=0
-	for r in range(nrows-1):
+	for r in range(nrows):
 		if not(r in cluster): #not a key then ways wasn't added
 			#Always add non added document
 			cluster[r]= cluster_count 
@@ -104,15 +106,18 @@ def kappa_scoring():
 	n=0
 	for r in range(M-1):
 		for c in range(r,M):
-			# import code; code.interact(local=dict(globals(), **locals()))
+			
 			print('%d of %d computing %s vs %s...' % (n+1,N,names[r],names[c]))				
 			x=df[names[r]].as_matrix()
 			y=df[names[c]].as_matrix()
+			# 	import code; code.interact(local=dict(globals(), **locals()))
 			S[r,c]=cohen_kappa_score(x,y)
 			print('%d of %d computing %s vs %s...done' % (n+1,N,names[r],names[c]))				
 			n+=1			
 	print(list(df.columns))		
 	print(S)
+	df_kappa=pd.DataFrame(data=S, columns=df.columns,index=df.columns)
+	df_kappa.to_csv(DATASET_PATH + 'kappa_score.txt', sep=' ')
 
 def distance_matrix_clustering():
 	'''
