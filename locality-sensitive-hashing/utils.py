@@ -19,7 +19,7 @@ from datetime import datetime
 from nltk.corpus import stopwords as _stopwords
 from nltk.stem import * 
 
-# from sklearn.preprocessing import normalize
+from sklearn.metrics import jaccard_similarity_score
 
 INVALID_TOKENS=[None, '', ' ']
 
@@ -112,30 +112,23 @@ def bow2dist(bow, verbose=True, distance_type='euclidian'):
 	starttime= datetime.now()
 	total= d*(d-1)*0.5
 	counter=0
-	docnorm={}
+	doc_norm={}
 	#Preprocessing bow
 	if distance_type=='jaccard':
 		bow=bow.astype(bool)
 
 	if distance_type=='euclidian':
-		docnorm={key:1 for key in range(d)}
+		doc_norm={key:1 for key in range(d)}
 
 	if distance_type=='normalize':
-		docnorm={key:np.linalg.norm(bow[:,key]) for key in range(d)}
+		doc_norm={key:np.linalg.norm(bow[:,key]) for key in range(d)}
 	
 	for i in range(d):
 		for j in range(0,i):
-			if distance_type=='jaccard':
-				# import code; code.interact(local=dict(globals(), **locals()))
-				set_diff =np.bitwise_xor(bow[:,i],bow[:,j])
-				set_union=np.bitwise_or(bow[:,i],bow[:,j])
-				dist[i,j]=float(sum(set_diff))/sum(set_union)
+			if distance_type=='jaccard':				
+				dist[i,j]=1-jaccard_similarity_score(bow[:,i], bow[:,j])
 			else:
-				dif = bow[:,i]-bow[:,j]				
-				dist[i,j]=np.sqrt(np.dot(dif,dif))/(docnorm[i]*docnorm[j])  
-
-
-
+ 				dist[i,j]=compute_distance(bow[:,i], bow[:,j], normx=doc_norm[i], normy=doc_norm[j])	
 
 			if verbose:
 				status= (i,j,dist[i,j], elapsed_time(starttime), float(counter) *100 / total)				
@@ -144,6 +137,42 @@ def bow2dist(bow, verbose=True, distance_type='euclidian'):
 			counter+=1
 	print('')				
 	return dist
+
+def compute_jaccard_distance(x, y):
+	'''		
+	Computes jaccard distance between arrays x, y 
+	jaccard distance: (x in y) / (x union y)
+
+	INPUT
+		x<int<V,1>>: column of bow
+
+		y<int<V,1>>: column of bow
+
+	
+	OUTPUT
+		dist<float>: dist in [0.0,1.0]
+	
+	'''	
+	ind_x= x>0 
+	ind_y= y>0
+	return float(sum(ind_x & ind_y))/(sum(ind_x)+sum(ind_y))
+
+def compute_distance(x, y, normx=1, normy=1):	
+	'''		
+	Computes eulidian / normalized distance between arrays x, y 
+
+	INPUT
+		x<int<V,1>>: column of bow
+
+		y<int<V,1>>: column of bow
+
+	
+	OUTPUT
+		dist<float>: dist in [0.0,1.0] if normx != 1  and normy != 1 
+	
+	'''	
+	diff = x-y
+	return np.sqrt(np.dot(dif,dif))/(norm_x*norm_y)  
 
 
 def matrix2txt(mtrx, filename='mtrx.txt'):
