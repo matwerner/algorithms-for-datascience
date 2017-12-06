@@ -69,107 +69,138 @@ def clusterize(dist):
 	return cluster
 		
 
-def scoring(fn_score, filename):
+def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='confusion_matrix.txt'):
 	'''
-		Scans dataset for clusters glob (dict) than computes the aggrebleness score 
+		Scans dataset for clusters glob matching pattern_evaluate and compares 
+		against glob matching pattern_gs
 		which is a count over a pair of clusters which neighbours agree
 
 		INPUT 
-			cluster<dict<int,int>>: cluster dict int, int 
+			pattern_evaluate<str>
+
+			pattern_gs<str>
+
 
 		OUTPUT
 			scoring<float<M,M>>: cross model comparison			
 	'''	
-	matcher = re.compile('(.*)_cluster.txt$')
-	files=glob.glob(CLUSTER_MODELS_PATTERN)	
-	M=len(files)
-	print('%d files found matching _cluster.txt suffix' % M)
+	# matcher 				 = re.compile('(.*)_cluster.txt$')
+	# pattern_evaluate1= DATASET_PATH + pattern_evaluate
+	# files=glob.glob(pattern_evaluate1)	
+	# M=len(files)
+	# print('%d files found matching r\'%s\' suffix' % (M,pattern_gs))
 
-	names=[]
-	for i, file in enumerate(files):	
+	# names=[]
+	# for i, file in enumerate(files):	
 		
-		filename_i=file.split('/')[-1]
-		matchings= matcher.match(filename_i)
-		data_model=matchings.groups()[0]		
+	# 	filename_i=file.split('/')[-1]
+	# 	matchings= matcher.match(filename_i)
+	# 	data_model=matchings.groups()[0]		
 
-		print('Fetching %d\t%s...' % (i+1,data_model))				
-		if i==0:
-			df= pd.read_csv(file, sep= ' ', index_col=0, header=None)		
-			df.columns=[data_model] 
-		else:
-			df_tmp= pd.read_csv(file, sep= ' ', index_col=0, header=None)		
-			df_tmp.columns=[data_model] 
-			df=pd.concat((df,df_tmp),axis=1)
-		names.append(data_model)
-		print('Fetching %d\t%s...done' % (i+1,data_model))				
+	# 	print('Fetching %d\t%s...' % (i+1,data_model))				
+	# 	if i==0:
+	# 		df= pd.read_csv(file, sep= ' ', index_col=0, header=None)		
+	# 		df.columns=[data_model] 
+	# 	else:
+	# 		df_tmp= pd.read_csv(file, sep= ' ', index_col=0, header=None)		
+	# 		df_tmp.columns=[data_model] 
+	# 		df=pd.concat((df,df_tmp),axis=1)
+	# 	names.append(data_model)
+	# 	print('Fetching %d\t%s...done' % (i+1,data_model))				
+
+	df_eval= df_cluster(pattern_evaluate)
+	df_gs= df_cluster(pattern_gs)
+	M = df_eval.shape[0] 
+	N = df_gs.shape[0]
 
 
-	S= np.zeros((M,M), dtype=np.float32)
-	N = M*(M-1)/2 + M
-	n=0
-	for r in range(M-1):
-		for c in range(r,M):
-			
-			print('%d of %d computing %s vs %s...' % (n+1,N,names[r],names[c]))				
-			x=df[names[r]].as_matrix()
-			y=df[names[c]].as_matrix()
+	D= np.zeros((M*N,9), dtype=np.float32)
+	index=[]
+	columns=[]
+	count=0
+	for m in range(M):
+		for n in range(N):
+			col_namem= list(df_eval.columns.names)[m]
+			col_namen= list(df_gs.columns.names)[n]
+			print('%d of %d Confusion matrix: %s vs %s...' % (count+1,N*M,col_namem,col_namen))				
+
+			index.append( '%sx%s' % (col_namem,col_namen))
+
+			#Sync data
+			data=df_eval[col_namem].join(df_gs, how='inner')
+			x=dict(zip(data.index,data[labelm]))
+			y=dict(zip(data.index,data[labeln]))
+			metrics=confusion_matrix_scoring(x, y)
+				# import code; code.interact(local=dict(globals(), **locals()))
+			D[count,:]=np.ndarray(metrics)
 			# 	import code; code.interact(local=dict(globals(), **locals()))
 			# S[r,c]=agreeableness_score(x,y)
-			S[r,c]=fn_score(x,y)
-			print('%d of %d computing %s vs %s...done' % (n+1,N,names[r],names[c]))				
-			n+=1			
+			# S[r,c]=fn_score(x,y)
+			
+			print('%d of %d Confusion matrix: %s vs %s...' % (count+1,N*M,col_namem,col_namen))				
+			count+=1			
+
 	print(list(df.columns))		
 	print(S)
-	df=pd.DataFrame(data=S, columns=df.columns,index=df.columns)
-	df.to_csv(DATASET_PATH + filename, sep=' ')
+	headers=['a','b','c','d','A','P','R','F-1','J']
+	df=pd.DataFrame(data=S, columns=headers, index=index)
+	df.to_csv(DATASET_PATH + metrics_filename, sep=' ')
 
-def co_ocurrence_scoring(filename):
+
+def df_cluster(str_pattern):
 	'''
-		Computes the model within filename and counts pair/units of sets the also
-		occur on gold standard
+		Scans dataset for clusters glob matching str_pattern and 
+			returns all 		
 
 		INPUT 
-			filename: 
+			str_pattern<str>: Fetches a glob of files that match
 
 		OUTPUT
-			result<float>: rate of co-ocurrence 0-1 
-			
-	'''	
-	
-	print('Fetching %s...' % (filename))				
+			df<pandas.DataFrame>: index: observationsid
+														column.names: filenames
+														values:clusterid
 
-	full_filename= DATASET_PATH + filename
-	df= pd.read_csv(full_filename, sep= ' ', index_col=0, header=None)		
-	c1={k:v for k,v in zip(df.index,df.iloc[:,0])}
+		examples: 
+		str_pattern= '*_cluster.txt'
+		matches: 'gaussian_0.3_cluster.txt', 'sparse_0.4_cluster.txt' but not 'goldenset.csv'
+	'''
+	matcher 				 = re.compile('(.*)_cluster.txt$')
+	str_pattern1= DATASET_PATH + str_pattern
+	files=glob.glob(str_pattern1)	
+	M=len(files)
+	print('%d files found matching r\'%s\' pattern' % (M,str_pattern))
+	names=[]
+	for i, file in enumerate(files):			
+		colname=get_filename(file)
 
-	full_filename= DATASET_PATH + 'goldenset.csv'
-	df= pd.read_csv(full_filename, sep= ';', index_col=0, header=1)		
-	cg= {k:v for k,v in zip(df.index,df.iloc[:,0])}
-	# import code; code.interact(local=dict(globals(), **locals()))
-	df_tmp.columns=[data_model] 
-	df=pd.concat((df,df_tmp),axis=1)
-	names.append(data_model)
-	print('Fetching %d\t%s...done' % (i+1,data_model))				
+		print('Fetching %d\t%s...' % (i+1, colname))				
+		if i==0:
+			df= pd.read_csv(file, index_col=0, header=None)		
+			df.columns=[colname] 
+		else:
+			df_tmp= pd.read_csv(file, index_col=0, header=None)		
+			df_tmp.columns=[colname] 
+			df=pd.concat((df,df_tmp),axis=1)
+		
 
+		print('Fetching %d\t%s...done' % (i+1,colname))				
 
-	S= np.zeros((M,M), dtype=np.float32)
-	N = M*(M-1)/2 + M
-	n=0
-	for r in range(M-1):
-		for c in range(r,M):
-			
-			print('%d of %d computing %s vs %s...' % (n+1,N,names[r],names[c]))				
-			x=df[names[r]].as_matrix()
-			y=df[names[c]].as_matrix()
-			# 	import code; code.interact(local=dict(globals(), **locals()))
-			# S[r,c]=agreeableness_score(x,y)
-			S[r,c]=confusion_matrix_scoring(x,y)
-			print('%d of %d computing %s vs %s...done' % (n+1,N,names[r],names[c]))				
-			n+=1			
-	print(list(df.columns))		
-	print(S)
-	df=pd.DataFrame(data=S, columns=df.columns,index=df.columns)
-	df.to_csv(DATASET_PATH + filename, sep=' ')
+	return df 	
+
+def get_filename(filename):	
+	'''
+		Removes filename's prefix and suffix
+		INPUT
+			filename<str>: fullname path
+		
+		OUTPUT
+			filename1<str>: filename without extension or file_system stuff
+				
+	'''
+	filename1= filename.split('/')[-1]
+	filename_parts= filename1.split('.')[:-2]
+	filename1= '.'.join(filename_parts)
+	return filename1
 
 def agreeableness_score(c1, c2):
 	'''
