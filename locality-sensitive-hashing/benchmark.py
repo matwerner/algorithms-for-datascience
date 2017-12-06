@@ -16,12 +16,8 @@ import re
 import pandas as pd 
 import numpy as np 
 
+#Nice command line 
 import sys 
-
-#ML stuff
-from sklearn.metrics import cohen_kappa_score
-
-
 
 
 # Relative path to dataset
@@ -91,6 +87,7 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 	df_eval= df_cluster(pattern_evaluate)
 
 	df_gs= df_cluster(pattern_gs)
+	# import code; code.interact(local=dict(globals(), **locals()))				 	
 	M = df_eval.shape[1] 
 	N = df_gs.shape[1]
 
@@ -109,9 +106,9 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 			index.append( '%s_x_%s' % (colname_m,colname_n))
 
 			#Sync data
-			data=df_eval[colname_m].to_frame() 
 			
-			data=data.join(df_gs[colname_n].to_frame(), how='inner')
+			data=df_gs[colname_n].to_frame()			
+			data=data.join(df_eval[colname_m].to_frame(), how='inner')
 
 			x=dict(zip(data.index,data[colname_m]))
 			y=dict(zip(data.index,data[colname_n]))
@@ -155,7 +152,6 @@ def df_cluster(str_pattern):
 
 		print('Fetching %d\t%s...' % (i+1, colname))				
 		if i==0:
-
 			df= pd.read_csv(file, sep= ' ',index_col=0, header=None)		
 			df.columns=[colname] 
 		else:
@@ -220,7 +216,7 @@ def mapping_pairs(neighbour_dict):
 	for doc_id, doc_neighbours in neighbour_dict.items():
 		sys.stdout.write('mapping_pairs:%d of %d doc_id:%s \r' % (count,x,str(doc_id)))
 		sys.stdout.flush()
-			
+
 		if not(doc_id in processed):
 			l= len(doc_neighbours)	
 			this_elements={i for i in doc_neighbours}
@@ -293,6 +289,7 @@ def confusion_matrix_scoring(c_a, c_b):
 	u_dupl,u_uniq=mapping_pairs(mapping_neighbour(c_a))
 	v_dupl,v_uniq=mapping_pairs(mapping_neighbour(c_b))
 
+	# import code; code.interact(local=dict(globals(), **locals()))				 	
 	# c11: count (pairs) u in v (intersection) : 
 	# both models aggree: True Positive, repetitions
 	a = len(u_dupl & v_dupl) 
@@ -356,9 +353,8 @@ def distance_matrix_clustering():
 
 if __name__ == '__main__'	:	
 	# Example  1 class example
-	# scoring('toyU_cluster.txt', 'toyV_cluster.txt', 'toy_confusion_matrix.txt')
+	scoring('toyU_cluster.txt', 'toyV_cluster.txt', 'toy_confusion_matrix.txt')
 	# Example  2  using gaussian_0.3_cluster.txt as benchmark
 	# scoring('gaussian_0.5_cluster.txt', 'gaussian_0.3_cluster.txt', 'gaussian_confusion_matrix.txt')
-	
-	
-
+	# Example  3  using goldenset.csv as benchmark
+	# scoring('gaussian_0.3_cluster.txt')
