@@ -128,7 +128,7 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 			print('%d of %d Confusion matrix: %s vs %s...' % (count+1,N*M,colname_m,colname_n))				
 			
 
-			index.append( '%sx%s' % (colname_m,colname_n))
+			index.append( '%s_x_%s' % (colname_m,colname_n))
 
 			#Sync data
 			data=df_eval[colname_m].to_frame() 
@@ -271,7 +271,7 @@ def mapping_pairs(neighbour_dict):
 	count=0
 	x=len(neighbour_dict)
 	for doc_id, doc_neighbours in neighbour_dict.items():
-		sys.stdout.write('mapping_pairs:%d of %d doc_id:%d \r' % (count,x,doc_id))
+		sys.stdout.write('mapping_pairs:%d of %d doc_id:%s \r' % (count,x,str(doc_id)))
 		sys.stdout.flush()
 			
 		if not(doc_id in processed):
@@ -420,9 +420,10 @@ def distance_matrix_clustering():
 
 
 if __name__ == '__main__'	:
-
 	# fn_score= lambda x,y :  agreeableness_score(x, y)
-	# Example using gaussian_0.3_cluster.txt as benchmark
-	scoring('gaussian_0.5_cluster.txt', 'gaussian_0.3_cluster.txt')
+	# Example 1  using gaussian_0.3_cluster.txt as benchmark
+	# scoring('gaussian_0.5_cluster.txt', 'gaussian_0.3_cluster.txt')
+	# Example  2 class example
+	scoring('toyU_cluster.txt', 'toyV_cluster.txt')
 	# confusion_matrix_scoring('gaussian_0.3_cluster.txt')
 

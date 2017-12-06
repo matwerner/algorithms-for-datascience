@@ -1,2 +1,2 @@
  a b c d A P R F-1 J
-gaussian_0.5_clusterxgaussian_0.3_cluster 1.0 0.0 0.0 49987056.0 1.0 1.0 1.0 1.0 1.0
+toyU_cluster_x_toyV_cluster 1.0 2.0 0.0 6.0 0.7777777910232544 1.0 0.3333333432674408 0.5 0.3333333432674408
