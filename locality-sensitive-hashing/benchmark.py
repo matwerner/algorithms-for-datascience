@@ -15,8 +15,11 @@ import re
 import pandas as pd 
 import numpy as np 
 
+import sys 
+
 #ML stuff
 from sklearn.metrics import cohen_kappa_score
+
 
 
 
@@ -110,8 +113,8 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 
 	df_eval= df_cluster(pattern_evaluate)
 	df_gs= df_cluster(pattern_gs)
-	M = df_eval.shape[0] 
-	N = df_gs.shape[0]
+	M = df_eval.shape[1] 
+	N = df_gs.shape[1]
 
 
 	D= np.zeros((M*N,9), dtype=np.float32)
@@ -120,30 +123,31 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 	count=0
 	for m in range(M):
 		for n in range(N):
-			col_namem= list(df_eval.columns.names)[m]
-			col_namen= list(df_gs.columns.names)[n]
-			print('%d of %d Confusion matrix: %s vs %s...' % (count+1,N*M,col_namem,col_namen))				
+			colname_m= list(df_eval.columns)[m]
+			colname_n= list(df_gs.columns)[n]
+			print('%d of %d Confusion matrix: %s vs %s...' % (count+1,N*M,colname_m,colname_n))				
+			
 
-			index.append( '%sx%s' % (col_namem,col_namen))
+			index.append( '%sx%s' % (colname_m,colname_n))
 
 			#Sync data
-			data=df_eval[col_namem].join(df_gs, how='inner')
-			x=dict(zip(data.index,data[labelm]))
-			y=dict(zip(data.index,data[labeln]))
+			data=df_eval[colname_m].to_frame() 
+			data=data.join(df_gs[colname_n].to_frame(), how='inner')
+
+			x=dict(zip(data.index,data[colname_m]))
+			y=dict(zip(data.index,data[colname_n]))
 			metrics=confusion_matrix_scoring(x, y)
-				# import code; code.interact(local=dict(globals(), **locals()))
-			D[count,:]=np.ndarray(metrics)
-			# 	import code; code.interact(local=dict(globals(), **locals()))
+			# import code; code.interact(local=dict(globals(), **locals()))						
+			D[count,:]=np.array(metrics)
 			# S[r,c]=agreeableness_score(x,y)
 			# S[r,c]=fn_score(x,y)
 			
-			print('%d of %d Confusion matrix: %s vs %s...' % (count+1,N*M,col_namem,col_namen))				
+			print('%d of %d Confusion matrix: %s vs %s...' % (count+1,N*M,colname_m,colname_n))				
 			count+=1			
 
-	print(list(df.columns))		
-	print(S)
-	headers=['a','b','c','d','A','P','R','F-1','J']
-	df=pd.DataFrame(data=S, columns=headers, index=index)
+	headers=['a','b','c','d','A','P','R','F-1','J']	
+	df=pd.DataFrame(data=D, columns=headers, index=index)
+	print(df)
 	df.to_csv(DATASET_PATH + metrics_filename, sep=' ')
 
 
@@ -169,22 +173,20 @@ def df_cluster(str_pattern):
 	files=glob.glob(str_pattern1)	
 	M=len(files)
 	print('%d files found matching r\'%s\' pattern' % (M,str_pattern))
-	names=[]
+	newnames=[]
 	for i, file in enumerate(files):			
 		colname=get_filename(file)
 
 		print('Fetching %d\t%s...' % (i+1, colname))				
 		if i==0:
-			df= pd.read_csv(file, index_col=0, header=None)		
+			df= pd.read_csv(file, sep= ' ',index_col=0, header=None)		
 			df.columns=[colname] 
 		else:
-			df_tmp= pd.read_csv(file, index_col=0, header=None)		
+			df_tmp= pd.read_csv(file, sep= ' ', index_col=0, header=None)		
 			df_tmp.columns=[colname] 
-			df=pd.concat((df,df_tmp),axis=1)
-		
-
+			df=pd.concat((df,df_tmp),axis=1)						
 		print('Fetching %d\t%s...done' % (i+1,colname))				
-
+	
 	return df 	
 
 def get_filename(filename):	
@@ -196,9 +198,9 @@ def get_filename(filename):
 		OUTPUT
 			filename1<str>: filename without extension or file_system stuff
 				
-	'''
+	'''	
 	filename1= filename.split('/')[-1]
-	filename_parts= filename1.split('.')[:-2]
+	filename_parts= filename1.split('.')[:-1]
 	filename1= '.'.join(filename_parts)
 	return filename1
 
@@ -245,12 +247,12 @@ def mapping_neighbour(cluster_dict):
 		
 	'''	
 	neighbours_mapping={}
-	for key, value in this_dict.items():
+	for key, value in cluster_dict.items():
 		if value in neighbours_mapping:
 			neighbours_mapping[value].append(key)
 		else:
 			neighbours_mapping[value]=[key]	
-	return {key:set(neighbours_mapping[value]) for key, value in this_dict.items()}	
+	return {key:set(neighbours_mapping[value]) for key, value in cluster_dict.items()}	
 
 def mapping_pairs(neighbour_dict):
 	'''
@@ -260,23 +262,47 @@ def mapping_pairs(neighbour_dict):
 			neighbour_dict<int,set<int>>: each value from the neightbour dict is a set of integers of variable size
 
 		OUTPUT
-			set<set<int>>: is a set of sets: the inner set has either one element or a pair 
+			list<set<int>>: is a list of sets: the inner set has either one element or a pair 
 
 	'''
-	processed_docs=[]
-	list_of_sets=[]
-	for doc_id, doc_neigh in neighbour_dict.items():
-		if not(doc_id in processed_docs):
-			l= len(doc_neigh)	
-			if l==1:
-				new_set=doc_neigh
-			else:
-				new_set= set([[set([i,j])] for i in range(l-1) for j in range(i+1,l)])	
-			processed_docs+=list(new_set)
-			list_of_sets.append(new_set)
+	processed=set([])
+	list_of_pairs=[]
+	list_of_uniques=[]
+	count=0
+	x=len(neighbour_dict)
+	for doc_id, doc_neighbours in neighbour_dict.items():
+		sys.stdout.write('mapping_pairs:%d of %d doc_id:%d \r' % (count,x,doc_id))
+		sys.stdout.flush()
 			
-	return set(list_of_sets)
+		if not(doc_id in processed):
+			l= len(doc_neighbours)	
+			this_elements={i for i in doc_neighbours}
+			if l==1:				
+				list_of_uniques+=list(doc_neighbours)
+			else:
+				neighbours=list(doc_neighbours)
+				list_of_pairs= [[neighbours[i],neighbours[j]] for i in range(l-1) for j in range(i+1,l)]
+			
+			processed =processed.union(this_elements)
 
+		count+=1	
+		
+		set_uniques=set(list_of_uniques)
+		set_duplicates=lol2sos(list_of_pairs)
+	return set_duplicates, set_uniques
+
+def lol2sos(list_of_lists):
+	'''
+		converts a list of list to a set of frozen sets
+		INPUT
+			pair_map<int,set<int>>: 
+
+		OUTPUT
+			list<set<int>>: is a list of sets: the inner set has either one element or a pair 
+
+	'''	
+
+	return set(map(frozenset,list_of_lists))
 
 def confusion_matrix_scoring(c_a, c_b):
 	'''
@@ -314,32 +340,40 @@ def confusion_matrix_scoring(c_a, c_b):
 		raise ValueError(msg) 
 	else:
 		n=len(c_a)
-	u=mapping_pairs(mapping_neighbour(c_a))
-	v=mapping_pairs(mapping_neighbour(c_b))
+	
+	u_dupl,u_uniq=mapping_pairs(mapping_neighbour(c_a))
+	v_dupl,v_uniq=mapping_pairs(mapping_neighbour(c_b))
 
 
-	is_pair = lambda x: len(x)==2
-	u_p= filter(is_pair,u)
-	u_s= u - u_p
-	v_p= filter(is_pair,v)
-	v_s= v - v_p
+	# is_repeated = lambda x: isinstance(x,list)
+	# is_unique   = lambda x: not isinstance(x,list) 
+	
+	# u_p= set(map(frozenset,filter(is_repeated,u)))
+	# u_s= set(map(frozenset,filter(is_unique,u)))
+	# v_p= partition_pairs(v)
+	# v_s= partition_uniques(v)
+
+	# u_p= set(map(frozenset,filter(is_repeated,u)))
+	# u_s= set(map(frozenset,filter(is_unique,u)))
+	# v_p= set(map(frozenset,filter(is_repeated,v)))
+	# v_s= set(map(frozenset,filter(is_unique,v)))
 
 	# c11: count (pairs) u in v (intersection) : 
 	# both models aggree: True Positive, repetitions
-	a = len(u_p in v_p) 
+	a = len(u_dupl & v_dupl) 
 	# c12: count (pairs) u - v 	(set diff) 		 : 
 	# models disaggree: repetions in u and not in v
-	b = len(u_p - v_p) 
+	b = len(u_dupl - v_dupl) 
 	# c21: count (pairs) v - u  (intersection)
 	# models disaggree: repetions in v and not in u
-	c = len(v_p - u_p) 
+	c = len(v_dupl - u_dupl) 
 	# c22: count (pairs) u  v 	(set diff)
-	d= len(u_s)+len(v_s)+n*(n-1)*0.5-(a+b+c)
+	d= len(u_uniq)+len(v_uniq)+n*(n-1)*0.5-(a+b+c)
 
 
 	accuracy= float(a + d)/(a + b + c + d)
 
-  precision= float(a)/(a + c)
+	precision= float(a)/(a + c)
 
 	recall= float(a)/(a + b)
 
@@ -376,7 +410,6 @@ def distance_matrix_clustering():
 		filename=file.split('/')[-1]
 		matchings= matcher.match(filename)
 		data_model=matchings.groups()[0]
-		# import code; code.interact(local=dict(globals(), **locals()))
 		print('Clustering of %s...' % (data_model))
 		cluster_filename=data_model+'_cluster.txt'
 		cluster=clusterize(dist)
@@ -389,8 +422,7 @@ def distance_matrix_clustering():
 if __name__ == '__main__'	:
 
 	# fn_score= lambda x,y :  agreeableness_score(x, y)
-	# filename='aggreableness_score.txt'
-
-	# scoring(fn_score, filename)
-	confusion_matrix_scoring('gaussian_0.3_cluster.txt')
+	# Example using gaussian_0.3_cluster.txt as benchmark
+	scoring('gaussian_0.5_cluster.txt', 'gaussian_0.3_cluster.txt')
+	# confusion_matrix_scoring('gaussian_0.3_cluster.txt')
 

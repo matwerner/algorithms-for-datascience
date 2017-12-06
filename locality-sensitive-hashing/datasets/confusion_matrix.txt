@@ -1,0 +1,2 @@
+ a b c d A P R F-1 J
+gaussian_0.5_clusterxgaussian_0.3_cluster 1.0 0.0 0.0 49987056.0 1.0 1.0 1.0 1.0 1.0
