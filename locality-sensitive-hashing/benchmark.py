@@ -112,6 +112,7 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 	# 	print('Fetching %d\t%s...done' % (i+1,data_model))				
 
 	df_eval= df_cluster(pattern_evaluate)
+
 	df_gs= df_cluster(pattern_gs)
 	M = df_eval.shape[1] 
 	N = df_gs.shape[1]
@@ -132,6 +133,7 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 
 			#Sync data
 			data=df_eval[colname_m].to_frame() 
+			# import code; code.interact(local=dict(globals(), **locals()))						
 			data=data.join(df_gs[colname_n].to_frame(), how='inner')
 
 			x=dict(zip(data.index,data[colname_m]))
@@ -179,6 +181,7 @@ def df_cluster(str_pattern):
 
 		print('Fetching %d\t%s...' % (i+1, colname))				
 		if i==0:
+
 			df= pd.read_csv(file, sep= ' ',index_col=0, header=None)		
 			df.columns=[colname] 
 		else:
@@ -281,14 +284,16 @@ def mapping_pairs(neighbour_dict):
 				list_of_uniques+=list(doc_neighbours)
 			else:
 				neighbours=list(doc_neighbours)
-				list_of_pairs= [[neighbours[i],neighbours[j]] for i in range(l-1) for j in range(i+1,l)]
+				list_of_pairs+= [[neighbours[i],neighbours[j]] for i in range(l-1) for j in range(i+1,l)]
 			
 			processed =processed.union(this_elements)
 
 		count+=1	
-		
-		set_uniques=set(list_of_uniques)
-		set_duplicates=lol2sos(list_of_pairs)
+
+
+	set_uniques=set(list_of_uniques)
+	set_duplicates=lol2sos(list_of_pairs)
+
 	return set_duplicates, set_uniques
 
 def lol2sos(list_of_lists):
@@ -340,10 +345,10 @@ def confusion_matrix_scoring(c_a, c_b):
 		raise ValueError(msg) 
 	else:
 		n=len(c_a)
-	
+	# import code; code.interact(local=dict(globals(), **locals()))						
 	u_dupl,u_uniq=mapping_pairs(mapping_neighbour(c_a))
 	v_dupl,v_uniq=mapping_pairs(mapping_neighbour(c_b))
-
+	# import code; code.interact(local=dict(globals(), **locals()))						
 
 	# is_repeated = lambda x: isinstance(x,list)
 	# is_unique   = lambda x: not isinstance(x,list) 
@@ -377,7 +382,7 @@ def confusion_matrix_scoring(c_a, c_b):
 
 	recall= float(a)/(a + b)
 
-	f1_measure= 2*float(recall*precision)/(recall+precision)
+	f1_measure= 2*float(recall*precision)/(recall+precision) if recall+precision>0 else 0
 
 	jaccard= float(a)/(a+b+c)
 
@@ -421,9 +426,10 @@ def distance_matrix_clustering():
 
 if __name__ == '__main__'	:
 	# fn_score= lambda x,y :  agreeableness_score(x, y)
-	# Example 1  using gaussian_0.3_cluster.txt as benchmark
-	# scoring('gaussian_0.5_cluster.txt', 'gaussian_0.3_cluster.txt')
-	# Example  2 class example
-	scoring('toyU_cluster.txt', 'toyV_cluster.txt')
+	# Example  1 class example
+	scoring('toyU_cluster.txt', 'toyV_cluster.txt', 'toy_confusion_matrix.txt')
+	# Example  2  using gaussian_0.3_cluster.txt as benchmark
+	scoring('gaussian_0.5_cluster.txt', 'gaussian_0.3_cluster.txt', 'gaussian_confusion_matrix.txt')
+	
 	# confusion_matrix_scoring('gaussian_0.3_cluster.txt')
 
