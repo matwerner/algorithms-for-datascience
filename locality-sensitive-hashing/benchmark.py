@@ -6,6 +6,7 @@
 
 	motivation: Benchmark module provinding clustering over distance matrix and goodness of fit metrics
 			 
+	clutch: import code; code.interact(local=dict(globals(), **locals()))				 	
 '''
 #Regex
 import glob # Unix style GLOB performs pattern matching on files
@@ -87,30 +88,6 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 		OUTPUT
 			scoring<float<M,M>>: cross model comparison			
 	'''	
-	# matcher 				 = re.compile('(.*)_cluster.txt$')
-	# pattern_evaluate1= DATASET_PATH + pattern_evaluate
-	# files=glob.glob(pattern_evaluate1)	
-	# M=len(files)
-	# print('%d files found matching r\'%s\' suffix' % (M,pattern_gs))
-
-	# names=[]
-	# for i, file in enumerate(files):	
-		
-	# 	filename_i=file.split('/')[-1]
-	# 	matchings= matcher.match(filename_i)
-	# 	data_model=matchings.groups()[0]		
-
-	# 	print('Fetching %d\t%s...' % (i+1,data_model))				
-	# 	if i==0:
-	# 		df= pd.read_csv(file, sep= ' ', index_col=0, header=None)		
-	# 		df.columns=[data_model] 
-	# 	else:
-	# 		df_tmp= pd.read_csv(file, sep= ' ', index_col=0, header=None)		
-	# 		df_tmp.columns=[data_model] 
-	# 		df=pd.concat((df,df_tmp),axis=1)
-	# 	names.append(data_model)
-	# 	print('Fetching %d\t%s...done' % (i+1,data_model))				
-
 	df_eval= df_cluster(pattern_evaluate)
 
 	df_gs= df_cluster(pattern_gs)
@@ -133,17 +110,14 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 
 			#Sync data
 			data=df_eval[colname_m].to_frame() 
-			# import code; code.interact(local=dict(globals(), **locals()))						
+			
 			data=data.join(df_gs[colname_n].to_frame(), how='inner')
 
 			x=dict(zip(data.index,data[colname_m]))
 			y=dict(zip(data.index,data[colname_n]))
 			metrics=confusion_matrix_scoring(x, y)
-			# import code; code.interact(local=dict(globals(), **locals()))						
+
 			D[count,:]=np.array(metrics)
-			# S[r,c]=agreeableness_score(x,y)
-			# S[r,c]=fn_score(x,y)
-			
 			print('%d of %d Confusion matrix: %s vs %s...' % (count+1,N*M,colname_m,colname_n))				
 			count+=1			
 
@@ -206,36 +180,6 @@ def get_filename(filename):
 	filename_parts= filename1.split('.')[:-1]
 	filename1= '.'.join(filename_parts)
 	return filename1
-
-def agreeableness_score(c1, c2):
-	'''
-		Computes the aggreableness score 
-		Count over a pair of clusters which neighbours agree
-
-		INPUT 
-			c1<list<int>>: cluster 1 labels
-
-			c2<list<int>>: cluster 2 labels
-
-		OUTPUT
-			scoring<float<M,M>>: cross model comparison			
-	'''	
-
-	D = len(c1)
-	c1_dict=dict(zip(range(D),c1))
-	c2_dict=dict(zip(range(D),c2))
-
-	
-	c1_neighbours=mapping_neighbour(c1_dict)
-	c2_neighbours=mapping_neighbour(c2_dict)
-
-	count=0
-	for i in range(D):
-		factor_1 = c1_neighbours[i].intersection(c2_neighbours[i])
-		factor_2 = c1_neighbours[i].union(c2_neighbours[i])
-		count+= float(len(factor_1)) / len(factor_2)
-
-	return float(count)/D	
 
 def mapping_neighbour(cluster_dict):
 	'''
@@ -345,23 +289,9 @@ def confusion_matrix_scoring(c_a, c_b):
 		raise ValueError(msg) 
 	else:
 		n=len(c_a)
-	# import code; code.interact(local=dict(globals(), **locals()))						
+
 	u_dupl,u_uniq=mapping_pairs(mapping_neighbour(c_a))
 	v_dupl,v_uniq=mapping_pairs(mapping_neighbour(c_b))
-	# import code; code.interact(local=dict(globals(), **locals()))						
-
-	# is_repeated = lambda x: isinstance(x,list)
-	# is_unique   = lambda x: not isinstance(x,list) 
-	
-	# u_p= set(map(frozenset,filter(is_repeated,u)))
-	# u_s= set(map(frozenset,filter(is_unique,u)))
-	# v_p= partition_pairs(v)
-	# v_s= partition_uniques(v)
-
-	# u_p= set(map(frozenset,filter(is_repeated,u)))
-	# u_s= set(map(frozenset,filter(is_unique,u)))
-	# v_p= set(map(frozenset,filter(is_repeated,v)))
-	# v_s= set(map(frozenset,filter(is_unique,v)))
 
 	# c11: count (pairs) u in v (intersection) : 
 	# both models aggree: True Positive, repetitions
@@ -424,12 +354,11 @@ def distance_matrix_clustering():
 
 
 
-if __name__ == '__main__'	:
-	# fn_score= lambda x,y :  agreeableness_score(x, y)
+if __name__ == '__main__'	:	
 	# Example  1 class example
-	scoring('toyU_cluster.txt', 'toyV_cluster.txt', 'toy_confusion_matrix.txt')
+	# scoring('toyU_cluster.txt', 'toyV_cluster.txt', 'toy_confusion_matrix.txt')
 	# Example  2  using gaussian_0.3_cluster.txt as benchmark
-	scoring('gaussian_0.5_cluster.txt', 'gaussian_0.3_cluster.txt', 'gaussian_confusion_matrix.txt')
+	# scoring('gaussian_0.5_cluster.txt', 'gaussian_0.3_cluster.txt', 'gaussian_confusion_matrix.txt')
 	
-	# confusion_matrix_scoring('gaussian_0.3_cluster.txt')
+	
 
