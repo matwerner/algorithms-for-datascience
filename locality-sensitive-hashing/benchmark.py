@@ -16,8 +16,8 @@ import re
 import pandas as pd 
 import numpy as np 
 
-# #Nice command line 
-# import sys 
+#Command line parsing 
+import argparse
 
 #cluster transformation functions
 from cluster_helper import cluster_txt2df, cluster_dict2set, cluster_set2pairwise
@@ -156,4 +156,23 @@ if __name__ == '__main__'	:
 	# Example  3  using goldenset.csv as benchmark
 	# scoring('gaussian_0.3_cluster.txt')
 	# Example  4  benchmark all clusters with a single call
-	scoring('*_cluster.txt')
+	# scoring('*_cluster.txt')
+	parser = argparse.ArgumentParser(description='Computes confusion matrix and metrics for models')
+
+	parser.add_argument('-f', action="store", dest="pattern_evaluate", type=str, default='*_cluster.txt', 
+		help="Input cluster filename or pattern to benchmark\n")
+
+	parser.add_argument('-g', action="store", dest="pattern_gs", type=str, default='goldenset.csv',
+		help="Golden-standard cluster filename or pattern to benchmark against\n")
+
+	parser.add_argument('-o', action="store", dest="filename", type=str, default='confusion_matrix',
+	help="""Output filename to store output data\n""")
+
+	args = parser.parse_args()
+
+	pattern_eval = args.pattern_evaluate
+	pattern_gs = args.pattern_gs
+	metrics_filename = args.filename
+
+	# main(projection_type, eps, store, refresh)	
+	scoring(pattern_eval, pattern_gs=pattern_gs, metrics_filename=metrics_filename)
