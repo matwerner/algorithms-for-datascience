@@ -62,8 +62,7 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 
 			index.append( '%s_x_%s' % (colname_m,colname_n))
 
-			#Sync data
-			
+			#Sync data			
 			data=df_gs[colname_n].to_frame()			
 			data=data.join(df_eval[colname_m].to_frame(), how='inner')
 

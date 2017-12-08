@@ -98,7 +98,7 @@ def tokenizer(sentences, stopwords=None, stemmer=None):
 	return ' '.join(tokens)
 
 
-def bow2dist(bow, verbose=True, distance_type='euclidian'):
+def bow2dist(bow, verbose=True, distance_type='normalize'):
 	'''		
 	INPUT
 		bow: bag-of-words VxD numpy matrix 		
@@ -128,7 +128,7 @@ def bow2dist(bow, verbose=True, distance_type='euclidian'):
 			if distance_type=='jaccard':				
 				dist[i,j]=1-jaccard_similarity_score(bow[:,i], bow[:,j])
 			else:
- 				dist[i,j]=compute_distance(bow[:,i], bow[:,j], normx=doc_norm[i], normy=doc_norm[j])	
+ 				dist[i,j]=compute_distance(bow[:,i], bow[:,j], norm_x=doc_norm[i], norm_y=doc_norm[j])	
 
 			if verbose:
 				status= (i,j,dist[i,j], elapsed_time(starttime), float(counter) *100 / total)				
@@ -157,7 +157,7 @@ def compute_jaccard_distance(x, y):
 	ind_y= y>0
 	return float(sum(ind_x & ind_y))/(sum(ind_x)+sum(ind_y))
 
-def compute_distance(x, y, normx=1, normy=1):	
+def compute_distance(x, y, norm_x=1, norm_y=1):	
 	'''		
 	Computes eulidian / normalized distance between arrays x, y 
 
@@ -172,7 +172,7 @@ def compute_distance(x, y, normx=1, normy=1):
 	
 	'''	
 	diff = x-y
-	return np.sqrt(np.dot(dif,dif))/(norm_x*norm_y)  
+	return np.sqrt(np.dot(diff,diff))/(norm_x*norm_y)  
 
 
 def matrix2txt(mtrx, filename='mtrx.txt'):
