@@ -13,7 +13,7 @@ from utils import get_stemmer, get_stopwords, tokenizer2, data2idx, data2bow, bo
 import argparse
 
 # Relative path to dataset
-DATASET_PATH='../locality-sensitive-hashing/datasets/' 
+DATASET_PATH='../../locality-sensitive-hashing/datasets/' 
 
 
 def main(distance_type,  refresh):

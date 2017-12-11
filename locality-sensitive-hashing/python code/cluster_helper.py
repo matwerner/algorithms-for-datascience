@@ -18,7 +18,7 @@ import numpy as np
 #Nice command line 
 import sys 
 
-DATASET_PATH='../locality-sensitive-hashing/datasets/'
+DATASET_PATH='../../locality-sensitive-hashing/datasets/'
 DISTANCE_MATRICES_PATTERN=DATASET_PATH + '*_distance_matrix.txt'
 CLUSTER_MODELS_PATTERN=DATASET_PATH + '*_cluster.txt'
 
