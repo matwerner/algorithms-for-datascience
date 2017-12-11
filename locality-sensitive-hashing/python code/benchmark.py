@@ -23,7 +23,9 @@ import argparse
 from cluster_helper import cluster_txt2df, cluster_dict2set, cluster_set2pairwise
 
 # Relative path to dataset
-DATASET_PATH='../../locality-sensitive-hashing/datasets/'
+DATASET_PATH='../locality-sensitive-hashing/datasets/'
+# Fullpath
+# DATASET_PATH='/Users/guilhermevarela/wrk/py/gv/algorithms-for-datascience/locality-sensitive-hashing/datasets/' 
 DISTANCE_MATRICES_PATTERN=DATASET_PATH + '*_distance_matrix.txt'
 CLUSTER_MODELS_PATTERN=DATASET_PATH + '*_cluster.txt'
 
@@ -48,7 +50,7 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 	M = df_eval.shape[1] 
 	N = df_gs.shape[1]
 
-
+	fposneg={}
 	D= np.zeros((M*N,9), dtype=np.float32)
 	index=[]
 	columns=[]
@@ -60,6 +62,7 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 			print('%d of %d Confusion matrix: %s vs %s...' % (count+1,N*M,colname_m,colname_n))				
 			
 
+
 			index.append( '%s_x_%s' % (colname_m,colname_n))
 
 			#Sync data			
@@ -68,7 +71,9 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 
 			x=dict(zip(data.index,data[colname_m]))
 			y=dict(zip(data.index,data[colname_n]))
-			metrics=confusion_matrix_scoring(x, y)
+			metrics,f_positives, f_negatives=confusion_matrix_scoring(x, y)
+			#update false positive false negative			
+			fposneg=update_fposneg(fposneg, f_positives, f_negatives, index[-1])
 
 			D[count,:]=np.array(metrics)
 			print('%d of %d Confusion matrix: %s vs %s...' % (count+1,N*M,colname_m,colname_n))				
@@ -78,6 +83,15 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 	df=pd.DataFrame(data=D, columns=headers, index=index)
 	print(df)
 	df.to_csv(DATASET_PATH + metrics_filename, sep=' ')
+
+	posneg_filename=str(metrics_filename)
+	posneg_filename=posneg_filename.replace('matrix', 'pos_neg')
+	
+	headers=['i','j','pos_neg','files']	
+	df=pd.DataFrame.from_dict(fposneg, orient='index')
+	df.columns=headers
+	print(df.head())
+	df.to_csv(DATASET_PATH + posneg_filename, sep=' ')
 
 
 
@@ -126,10 +140,12 @@ def confusion_matrix_scoring(c_a, c_b):
 	a = len(u_dupl & v_dupl) 
 	# c12: count (pairs) u - v 	(set diff) 		 : 
 	# models disaggree: repetions in u and not in v
-	b = len(u_dupl - v_dupl) 
+	false_positives=u_dupl - v_dupl
+	b = len(false_positives) 
 	# c21: count (pairs) v - u  (intersection)
 	# models disaggree: repetions in v and not in u
-	c = len(v_dupl - u_dupl) 
+	false_negatives=v_dupl - u_dupl	
+	c = len(false_negatives)  
 	# c22: count (pairs) u  v 	(set diff)
 	d= len(u_uniq)+len(v_uniq)+n*(n-1)*0.5-(a+b+c)
 
@@ -144,7 +160,29 @@ def confusion_matrix_scoring(c_a, c_b):
 
 	jaccard= float(a)/(a+b+c)
 
-	return [a,b,c,d,accuracy,precision,recall,f1_measure,jaccard]
+	return [a,b,c,d,accuracy,precision,recall,f1_measure,jaccard],list(false_positives),list(false_negatives)
+
+
+
+def update_fposneg(fposneg, f_pos, f_neg, name):
+	counter=len(fposneg)
+	for fs in f_pos:
+		row_list=list(fs)
+		row_list.append('fp')
+		row_list.append(name)
+		fposneg[counter]=row_list
+		counter+=1
+
+	for fs in f_neg:
+		row_list=list(fs)
+		row_list.append('fn')
+		row_list.append(name)
+		fposneg[counter]=row_list
+		counter+=1		
+
+	return fposneg
+
+	
 
 
 if __name__ == '__main__'	:	
