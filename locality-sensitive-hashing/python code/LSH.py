@@ -19,7 +19,7 @@ def _universal_hash(prime, size):
     return lambda x: ((a * x + b) % prime) % size
 
 # Due to compatibility issue between multiprocessing and classes
-def _compute_min_hashing(documents, shingles_size, k, prime=2**61-1):
+def _compute_min_hashing(documents, shingles_size, k, prime=2**31-1):
     # Due to multiprocessing
     np.random.seed()
     
@@ -160,11 +160,11 @@ class LSH():
     ## Min-Hashing
 
     @classmethod
-    def __compute_min_hashing(self, documents, shingles_size, k, prime=2**61-1):
+    def __compute_min_hashing(self, documents, shingles_size, k, prime=2**31-1):
         return _compute_min_hashing(documents, shingles_size, k, prime)
 
     @classmethod
-    def __compute_min_hashing_multiprocessing(self, documents, shingles_size, k, prime=2**61-1):
+    def __compute_min_hashing_multiprocessing(self, documents, shingles_size, k, prime=2**31-1):
         # Instantiate
         threads = multiprocessing.cpu_count() - 1
         pool = multiprocessing.Pool(processes=threads)
@@ -192,7 +192,7 @@ class LSH():
     ## Locality-Sensitive Hashing
 
     @classmethod
-    def __compute_lsh(self, signatures, rows, bands, prime=2**61-1):
+    def __compute_lsh(self, signatures, rows, bands, prime=2**31-1):
         # Make n_buckets as large as possible
         # For now, we will use "1GB"
         n_buckets = int(10**9)

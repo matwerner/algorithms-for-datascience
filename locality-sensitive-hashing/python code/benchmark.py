@@ -23,7 +23,7 @@ import argparse
 from cluster_helper import cluster_txt2df, cluster_dict2set, cluster_set2pairwise
 
 # Relative path to dataset
-DATASET_PATH='../locality-sensitive-hashing/datasets/'
+DATASET_PATH='../../locality-sensitive-hashing/datasets/'
 # Fullpath
 # DATASET_PATH='/Users/guilhermevarela/wrk/py/gv/algorithms-for-datascience/locality-sensitive-hashing/datasets/' 
 DISTANCE_MATRICES_PATTERN=DATASET_PATH + '*_distance_matrix.txt'
@@ -49,7 +49,6 @@ def scoring(pattern_evaluate, pattern_gs='goldenset.csv', metrics_filename='conf
 
 	M = df_eval.shape[1] 
 	N = df_gs.shape[1]
-
 	fposneg={}
 	D= np.zeros((M*N,9), dtype=np.float32)
 	index=[]
