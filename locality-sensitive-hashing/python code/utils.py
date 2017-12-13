@@ -3,6 +3,9 @@
 	
 	Utility functions for text edition
 '''
+
+import glob # Unix style GLOB performs pattern matching on files
+
 #Invoking cmd line experiments 
 import argparse
 
@@ -24,6 +27,7 @@ from sklearn.metrics import jaccard_similarity_score
 INVALID_TOKENS=[None, '', ' ']
 
 DATASET_PATH= '../../locality-sensitive-hashing/datasets/'
+PROFILE_PATH= '../../locality-sensitive-hashing/profiles/'
 
 def tokenizer2(rawtxt, stopwords=None, stemmer=None): 
 	'''
@@ -335,3 +339,38 @@ def remove_puctuation(s):
 def elapsed_time(starttime):
 	this_timedelta= datetime.now() - starttime
 	return str(this_timedelta).split('.')[0]
+
+def profiles_pivot():
+	'''
+		Reads glob from profiles, saving a pivot table @ profile		
+		
+	'''
+	matcher = re.compile(PROFILE_PATH +'(.*)_profiler')
+	files=glob.glob(PROFILE_PATH + '*.txt')	
+	# import code; code.interact(local=dict(globals(), **locals()))
+	newcolumns=['model', 'eps', 'dim']
+	dataframes=[]
+	for i,f in enumerate(files):
+		#Parse filename
+		matched=matcher.match(f)
+		filename=matched.groups()[0]
+		newvalues=filename.split('_')
+
+		#Fetch data
+		df = pd.read_csv(f, sep=' ', header=None, index_col=None)
+		df.columns=['task', 'time']
+
+		#Add new data
+		for j,newcol in enumerate(newcolumns):
+			df[newcol]= newvalues[j]
+
+		#add
+		dataframes.append(df)
+	
+	df=pd.concat(dataframes, axis=0, ignore_index=True)
+	print(df.head(10))
+
+if __name__ == '__main__':
+	profiles_pivot()
+
+
