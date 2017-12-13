@@ -33,17 +33,16 @@ def _compute_min_hashing(documents, shingles_size, k, prime=2**31-1):
                 for j in range(k)]
                 for i in range(len(documents))]
     
-    # Each shingle for each document just need to be computed once
-    computed = [set() for i in range(len(documents))]
-    
     for i, document in enumerate(documents):
+        # Each shingle just need to be computed once
+        computed = set()
         for shingle in document:
             # Shingle already computed
-            if shingle in computed[i]:
+            if shingle in computed:
                 continue
             
             # Compute hash for shingle
-            computed[i].add(shingle)
+            computed.add(shingle)
             for j, hash_method in enumerate(hash_methods):
                 hash_value = hash_method(shingle)
                 
@@ -257,7 +256,7 @@ class LSH():
                 candidates.append(pair)
         
         return candidates
-
+    
     ## Remove some false positives
     @classmethod
     def __NER_check_false_positives(self, documents, pairs):
@@ -269,7 +268,7 @@ class LSH():
                 true_positives.append(pair)
 
         return true_positives
-
+    
     @classmethod
     def __check_false_positives(self, documents, pairs):
         true_positives = []
@@ -278,7 +277,7 @@ class LSH():
             
             # Check if same local
             local_x, local_y = self.__parse_local(documents[idx]), self.__parse_local(documents[idy])
-            if local_x and locay_y and local_x != local_y:
+            if local_x and local_y and local_x != local_y:
                 continue
             
             # Check if same formation
