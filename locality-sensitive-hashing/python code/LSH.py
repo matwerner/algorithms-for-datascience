@@ -5,6 +5,7 @@ import numpy as np
 import unidecode
 import re
 import sys
+from injectEntity import compareEntities
 
 def _universal_hash(prime, size):
     # Check values
@@ -257,6 +258,16 @@ class LSH():
         return candidates
 
     ## Remove some false positives
+    @classmethod
+    def __NER_check_false_positives(self, documents, pairs):
+        
+        true_positives = []
+        for pair in pairs:
+            idx, idy = pair
+            if compareEntities(idx,idy,"Polyglot"):
+                true_positives.append(pair)
+
+        return true_positives
 
     @classmethod
     def __check_false_positives(self, documents, pairs):
@@ -276,7 +287,7 @@ class LSH():
             
             true_positives.append(pair)
         
-        return true_positives        
+        return true_positives
 
     ## Convert documents to duplicates's clusters
 

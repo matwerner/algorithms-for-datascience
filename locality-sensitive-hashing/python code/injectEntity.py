@@ -27,6 +27,7 @@ def NerPolyglot(text,id):
     polyglotAnnotation = Text(text, hint_language_code='pt')
     for entity in polyglotAnnotation.entities:
         entityStr = list(polyglotAnnotation.words[entity.start:entity.end])
+        entityStr = " ".join(entityStr)
         # if entity.tag == "I-PER":
         #     entities[person].append(entityStr)
         if entity.tag == "I-LOC":
@@ -56,7 +57,7 @@ def injectEntities(outputJson,inputJson):
         vagas = json.load(f)
         output = {}
 
-        for vaga in vagas[9700:]:
+        for vaga in vagas:
             title = structureText(vaga["title"])
             entidadesVaga = getEntities(vaga)
             
@@ -67,7 +68,48 @@ def injectEntities(outputJson,inputJson):
         with open(outputJson,"w") as entities:
             entities.write(json.dumps(output))
 
-if __name__ == '__main__':
+def makeLookupTable():
     global NerModels 
     NerModels = {"Spacy":NerSpacy,"Polyglot":NerPolyglot }
     injectEntities("documents_entities.json","../datasets/development.json")
+
+
+
+lookupFile = "documents_entities.json"
+lookUpTable = json.loads(open(lookupFile,"r").read())
+
+def compareEntities(id1,id2,model):
+    """
+    Model must be "Spacy" or "Polyglot", the two ner models availiable
+    Checks if the entities "Place" and "Organisation" detected are the same
+    """
+
+    def Equal(l1,l2):
+        return set(l2) == set(l1)
+            
+    entityTypes = [organisation,place]
+    #keys = ["title","description"]
+    keys = ["description"]
+
+    for entity in entityTypes:
+        for key in keys:
+            l1 = lookUpTable[id1][model][key][entity]
+            l2 = lookUpTable[id2][model][key][entity]
+            if not Equal(l1,l2):
+                return False
+    
+    return True
+
+    # for entity in entityTypes: 
+    #     # Convert enityt lists to sets
+    #     for idx in [id1,id2]:
+    #         if not type(lookUpTable[idx][model][entity]) == set:
+    #             lookUpTable[idx][model][entity] = set(lookUpTable[idx][model][entity])
+
+    #     # Check if same
+    #     if not lookUpTable[id1][model][entity] == lookUpTable[id2][model][entity]:
+    #         return False
+
+if __name__ == '__main__':
+    #makeLookupTable()
+    print (compareEntities("9701","9703","Spacy"))
