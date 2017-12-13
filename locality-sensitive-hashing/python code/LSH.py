@@ -110,7 +110,8 @@ class LSH():
     ### Formation patterns
     __lookup_formation = ["formacao\s*requerida\s*:\s*","formacao\s*desejada\s*:\s*",
                           "escolaridade\s*requerida\s*:\s*", "escolaridade\s*:\s*",
-                          "escolaridade\s*desejada\s*:\s*", "formacao\s*:\s*"]
+                          "escolaridade\s*desejada\s*:\s*", "formacao\s*:\s*",
+                          "escolaridade\s*minima\s*:\s*"]
     __formation = re.compile("(" + "|".join(__lookup_formation) + ")", re.IGNORECASE)
 
     # Get a fix legth chuck after pattern
