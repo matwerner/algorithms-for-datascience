@@ -110,7 +110,8 @@ class LSH():
     ### Formation patterns
     __lookup_formation = ["formacao\s*requerida\s*:\s*","formacao\s*desejada\s*:\s*",
                           "escolaridade\s*requerida\s*:\s*", "escolaridade\s*:\s*",
-                          "escolaridade\s*desejada\s*:\s*", "formacao\s*:\s*"]
+                          "escolaridade\s*desejada\s*:\s*", "formacao\s*:\s*",
+                          "escolaridade\s*minima\s*:\s*"]
     __formation = re.compile("(" + "|".join(__lookup_formation) + ")", re.IGNORECASE)
 
     # Get a fix legth chuck after pattern
@@ -277,12 +278,12 @@ class LSH():
             
             # Check if same local
             local_x, local_y = self.__parse_local(documents[idx]), self.__parse_local(documents[idy])
-            if local_x != local_y:
+            if local_x and locay_y and local_x != local_y:
                 continue
             
             # Check if same formation
             formation_x, formation_y = self.__parse_formation(documents[idx]), self.__parse_formation(documents[idy])
-            if formation_x != formation_y:
+            if formation_x and formation_y and formation_x != formation_y:
                 continue
             
             true_positives.append(pair)
