@@ -1,0 +1,7 @@
+a AA
+b BB
+c AA
+d DD
+e BB
+f DD
+g BB

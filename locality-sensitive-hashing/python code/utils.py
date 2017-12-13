@@ -350,6 +350,7 @@ def profiles_pivot():
 	# import code; code.interact(local=dict(globals(), **locals()))
 	newcolumns=['model', 'eps', 'dim']
 	dataframes=[]
+	pivotframes=[]
 	for i,f in enumerate(files):
 		#Parse filename
 		matched=matcher.match(f)
@@ -368,7 +369,31 @@ def profiles_pivot():
 		dataframes.append(df)
 	
 	df=pd.concat(dataframes, axis=0, ignore_index=True)
-	print(df.head(10))
+	df['time'] = pd.to_timedelta(df['time'])
+	df['seconds']  = df['time'].dt.total_seconds()
+	# import code; code.interact(local=dict(globals(), **locals()))
+	df1=pd.pivot_table(df,values=['seconds'],index=['model','eps','dim','task'],aggfunc=len)
+	df1.columns=['N']
+	pivotframes.append(df1)
+
+	df1  =pd.pivot_table(df,values=['seconds'],index=['model','eps','dim','task'],aggfunc=np.mean)
+	df1.columns=['Avg.']
+	pivotframes.append(df1)
+
+	df1   =pd.pivot_table(df,values=['seconds'],index=['model','eps','dim','task'],aggfunc=np.std)	
+	df1.columns=['Std.']
+	pivotframes.append(df1)
+
+	df1   =pd.pivot_table(df,values=['seconds'],index=['model','eps','dim','task'],aggfunc=np.min)
+	df1.columns=['Min.']
+	pivotframes.append(df1)
+
+	df1   =pd.pivot_table(df,values=['seconds'],index=['model','eps','dim','task'],aggfunc=np.max)
+	df1.columns=['Max.']
+	pivotframes.append(df1)
+
+	df_pivot= pd.concat(pivotframes, axis=1)
+	df_pivot.to_csv(DATASET_PATH + 'statistics_profiler.txt', sep=' ')
 
 if __name__ == '__main__':
 	profiles_pivot()
