@@ -5,7 +5,7 @@ import numpy as np
 import unidecode
 import re
 import sys
-from injectEntity import compareEntities
+#from injectEntity import compareEntities
 
 def _universal_hash(prime, size):
     # Check values
@@ -292,8 +292,9 @@ class LSH():
     ## Convert documents to duplicates's clusters
 
     @classmethod
-    def __set_clusters(self, candidates, n_items):
+    def __set_clusters(self, dids, candidates, n_items):
         # Initialize clusters
+        remap_key = {i:did for i, did in enumerate(dids)}
         cids = {i:i for i in range(n_items)}
         clusters = {i:set([i]) for i in range(n_items)}
         
@@ -320,12 +321,18 @@ class LSH():
                 cids[item] = new_cid
             clusters[new_cid].update(clusters[old_cid])
             del clusters[old_cid]
-            
+        
+        # Remap document id to the real ids
+        cids = {remap_key[key]:cid for key, cid in cids.items()}
+        for cid, cluster in clusters.items():
+            cluster = [remap_key[key] for key in cluster]
+            clusters[cid] = cluster
         return clusters, cids
 
     ## Split documents into clusters
 
-    def fit_data(self, documents, check_fp=True):
+    def fit_data(self, doc_ids, documents, check_fp=True):
+        
         parsed_documents = self.__preprocessing(documents)
 
         documents_shingles, map_shingles = self.__to_shingles(parsed_documents, self.k)
@@ -339,7 +346,7 @@ class LSH():
         if check_fp:
             candidates = self.__check_false_positives(documents, candidates)
 
-        clusters, cids = self.__set_clusters(candidates, len(documents))
+        clusters, cids = self.__set_clusters(doc_ids, candidates, len(documents))
 
         self.cids = cids
         self.clusters = clusters
@@ -396,12 +403,14 @@ if __name__ == "__main__":
     ## Load dataset
 
     with open(data_path, mode="r", encoding="utf-8") as fp:
+        data = json.loads(fp.read())
         documents = [document['description']
-                    for document in json.loads(fp.readline())
-                    if document['description']]
+                    for document in data]
+        doc_ids = [document['id']
+                   for document in data]
 
     ## LSH
 
     instance = LSH(k, n_rows, n_bands, threshold)
-    instance.fit_data(documents, check_fp)
+    instance.fit_data(doc_ids, documents, check_fp)
     instance.save(output_path)
